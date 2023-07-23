@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<head>
+    <th:block layout:fragment="customStyle">
+        <style th:inline="css" type="text/css">
+           	
+        
+         .hamburger-menu {
+             display: block;
+             position: fixed;
+             top: 150px;
+             left: 50px;
+             cursor: pointer;
+             
+         }
+
+         .hamburger-menu span {
+             display: block;
+             width: 25px;
+             height: 3px;
+             background-color: black;
+             margin-bottom: 5px;
+             transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+         }	
+         
+         .side-menu {
+         	background-color: rgba(255, 255, 255, 0.9);
+            transform: translateX(-100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            z-index: 3;
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out;
+            border-right: 1px solid #CCCCCC;
+         } 
+
+         .side-menu.show {
+             transform: translateX(0);
+         }
+         
+		 .close-button {
+		    position: absolute;
+		    top: 20px;
+		    right: 20px;
+		    font-size: 24px;
+		    cursor: pointer;
+		    font-weight: bold;
+		}        
+        
+         
+		.consumer-image {
+		    width: 130px;
+		    height: 130px; 
+		    border-radius: 50%; 
+		    overflow: hidden; 
+		    margin: 0 auto;
+		    margin-bottom: 20px;
+		    margin-top: 150px;
+		}         
+		.consumer-image img{
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}         
+		
+		
+		.consumer-name{
+			text-align: center;
+			font-weight: bold;
+		}
+		
+		.menu-wrapper {
+			padding: 0 40px;
+		}
+		.menu-wrapper .menu{
+			margin-top: 18px;
+			padding: 0 5px;
+		}
+		 
+		.menu-wrapper p.outer-menu{
+			font-weight: bold;
+			font-size: 1.3rem;
+			margin: 0;	
+		} 
+		
+		.menu-wrapper ul{
+			list-style-type: none;
+			font-size: 1rem;
+			padding-left: 1.5rem;
+		}
+		
+		.menu-wrapper li{
+			margin: 4px 0;
+		}
+		
+		.menu-wrapper a {
+			color: rgb(50, 50, 50);;
+			text-decoration: none;
+		}
+		.menu-wrapper .inner-menu-list a {
+			color: rgb(80, 80, 80);
+		}
+
+      
+        
+        
+	     .comparison-title {
+	        text-align: center;
+	        margin: 70px 0;
+	      }	
+	      .big-title {
+	         font-size: 24px;
+	         font-weight: bold;
+	      }
+	      
+	      .small-title {
+	          font-size: 16px;
+	          margin-top: 10px;
+	          color: #9C9A9A;
+	      }
+	      
+	      .no-favorites{
+	          font-size: 20px;
+	          margin: 20px;
+	          color: #9C9A9A;				      	
+	      }
+	      	      
+		 .checkWrapTitle {
+			 padding: 10px 20px;
+		 }	      
+			      
+		 .checkWrapBig{
+			 font-weight: bold;
+			 font-size: 25px;
+		 }
+		 .checkWrapSmall{
+		 	display: flex;
+		    justify-content: space-between;
+		    align-items: center;		 	
+			font-size: 15px;
+			 color: #9C9A9A;
+		 } 
+		
+		 .checkWrapSmall button {			
+			border: none;
+		  	padding: 8px;
+			border-radius: 15px;
+		} 
+
+		.checkWrap {
+		    text-align: center;
+		    padding: 30px ;
+		    position: relative;
+		}
+		
+		.checkWrap::before,
+		.checkWrap::after {
+		    content: "";		    
+		    position: absolute;
+		    left: 0;
+		    right: 0;
+		    height: 3px;
+		    background-color: #D6D6D6;
+		    
+		}
+		
+		.checkWrap::before {
+		    top: 0;
+		}
+		
+		.checkWrap::after {
+		    bottom: 0;
+		    
+		}
+
+		.filter-arrow {
+		     display: block;
+             position: absolute;
+             top: 50%;
+             transform: translateY(-50%);
+             line-height: 25px;
+             text-align: center;
+             color: black;
+             cursor: pointer;
+             font-size: 40px;
+
+		}
+         .filter-arrow-left {
+             left: -40px;
+         }
+
+         .filter-arrow-right {
+             right: -40px;
+             
+         }
+                 
+          .favorite-item {
+             margin-left: 10px;
+             margin-right: 10px;
+             position: relative;
+                                   
+         }
+
+         .favorite-item img {
+             width: 210px;
+             height: 150px;
+             
+         }
+
+         .favorite-item input[type="checkbox"] {
+             width: 23px;
+             height: 23px;
+             position: absolute;
+             top: 10px;
+             right: 10px;
+             cursor: pointer;            
+   
+         }   
+         
+		.favoriteCost {
+			font-size: 20px;
+			font-weight: bold;
+		}
+		
+		.favorite-info {
+		    display: flex;
+		    justify-content: space-between;
+		    align-items: center;
+		}
+		
+		.favoriteTypeContainer {
+		    margin-left: auto;
+		    margin-right: 10px;
+		    margin-top :5px;
+		    font-size: 16px;
+		}
+	
+		.favoriteAddressContainer{
+			display: flex;
+			justify-content: flex-end;
+		}
+		
+		.favoriteAddress{
+			margin-right: 10px;
+			font-size: 5px;
+			color: #979797;
+		}   
+		
+	
+
+		.custom-hr {        
+		     border: 3px solid #ccc;
+		     margin: 20px 0;
+		  }		           
+                          
+         .comparison-item {
+             border: 1px solid #E8E8E8;
+             display: inline-block;                
+             padding: 15px;               
+             margin-top: 40px;
+             left: 70px;
+             text-align: center;
+             margin-bottom: 150px;
+
+         }
+         
+          .hidden-div {
+             display: none;             
+         }  
+
+		
+		.delete-button {
+		  border: none;
+		  background: none;
+		  font-size: 17px;
+		  cursor: pointer;
+		  color: red;
+		  font-weight: bold;
+		  margin-left: 5px;
+		}
+		
+		
+	   .comparison-item img {
+		   	width: 300px;
+		    height: 200px;
+		    margin-bottom: 10px;
+	   
+	   } 
+	   
+	   .favorite-address {
+		   	font-size: 15px;
+		   	color : #A4A4A4;
+		   	margin-bottom: 20px;
+		   
+	   }
+		.favorite-id {
+			display: none;
+		}
+		
+		.favorite-type{
+			font-size: 20px;
+		   	color : #8B8B8B;
+		}
+		.favorite-cost{
+			font-size: 25px;
+		   	font-weight: bold;	
+		}
+		.favorite-manageC{
+			font-size: 14px;
+			margin-bottom: 30px; 
+		}
+		
+		.favorite-floor, .favorite-size, .favorite-isroomIn, .favorite-direction ,
+		.favorite-parkingInfo, .favorite-isElevator, .favorite-heatInfo, .favorite-internetInfo,
+		.favorite-genderInfo, .favorite-security {
+			margin-bottom: 20px;
+		}
+		
+		
+		.favoriteOptionTitle , .favoriteOfferTitle, .memoTitle {
+			font-size: 20px;
+			margin: 30px 0;
+			font-weight: bold;
+			
+		}
+			
+/* 		.favoriteOptionTrue , .favoriteOptionFalse {
+			display : grid;
+			grid-template-columns: 1fr 1fr;
+			grid-row-gap: 7px;
+			margin-bottom: 80px
+		}  */
+			
+		.favoriteOptionTrue , .favoriteOptionFalse {
+			height: 150px;
+		} 	
+			
+				
+		
+		.OptionSpan {
+			color: #D6D6D6;
+		}
+		
+		
+		
+		.favoriteFoodOffer , .favoriteAmenityOffer {
+			font-weight: bold;
+			margin-bottom: 80px;
+		} 
+			
+		.memo{
+			 width: 250px;
+		     height: 150px;
+		     margin-bottom:10px; 
+		     border-radius: 10px;
+		     border: 2px solid #CDCDCD;
+		     padding: 10px;
+		     overflow-wrap: break-word;
+		}  
+		
+		
+		.memo-button {
+			border: 1px solid #CDCDCD;
+			border-radius: 10px;
+			padding: 3px 7px;
+			margin-bottom: 100px;
+		}
+			                                  	    		
+        </style>
+    </th:block>
+</head>
+
+<body>	
+    <th:block layout:fragment="content">
+
+    <div class="hamburger-menu" onclick="toggleSideMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="side-menu" id="sideMenu">
+    	<div class="close-button" onclick="toggleSideMenu()">X</div>
+        <div class="profile-wrapper">
+            <div class="consumer-image">
+                <img id="profileImage" th:src="@{/consumer/profile/photo(consumerId=${consumerUser.consumerId})}" alt="프로필">
+            </div>
+            <p class="consumer-name" th:text="${consumerUser.name+'님'}">회원A님</p>
+        </div>
+
+        <div class="menu-wrapper">
+            <div class="menu">
+                <p class="outer-menu"><a href="/mypage/member/info">회원정보</a></p>
+            </div>
+            <div class="menu">
+                <p class="outer-menu">커뮤니티</p>
+                <ul class="inner-menu-list">
+                    <li><a href="/mypage/content/list">작성한 글 보기</a></li>
+                    <li><a href="/mypage/comment/list">작성한 댓글 보기</a></li>
+                </ul>
+            </div>
+            <div class="menu">
+                <p class="outer-menu">찜목록</p>
+                <ul class="inner-menu-list">
+                    <li><a href="/mypage/favorite/list">찜 목록 보기</a></li>
+                    <li><a href="/mypage/favorite/compare">매물 비교</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="main-contents">
+        <div class="comparison-title">
+        	<div class="big-title">매물 비교</div>
+        	<div class="small-title">한 눈에 비교하며 내게 맞는 방을 고르세요 </div>
+        </div>
+        
+		<div class="checkWrapTitle">
+		    <div class="checkWrapBig">방 선택</div>
+		    <div class="checkWrapSmall">
+		        <span>최대 4개 선택 가능합니다</span>
+		        <button onclick="deselectCheckboxes()">방 재선택</button>
+		    </div>
+		</div>
+
+
+		
+        <div class="checkWrap">
+			<div class="no-favorites" th:if="${favorites.size() == 0}">
+			    찜한 매물이 없습니다 !
+			</div>        	
+            <div class="filter-arrow filter-arrow-left" id="filterLeftArrow" onclick="showPreviousFavorites()">&lt;</div>
+			<div class="filter-arrow filter-arrow-right" id="filterRightArrow" onclick="showNextFavorites()">&gt;</div>
+			
+            <div th:each="favorite, status : ${favorites}" class="favorite-item">
+				 <img th:src="@{/room/photo(roomId=${favorite.room.roomId})}" class="room-image" />
+					   
+                <input type="checkbox" name="favoriteIds" th:value="${favorite.favoriteId}" onchange="filterFavorites()">
+				<div class="favorite-info">
+				    <span class="favoriteCost" th:text="${#strings.equals(favorite.room.costType, '월세') ? (favorite.room.deposit != 0 ? (favorite.room.costType + ' ' + favorite.room.deposit + '/' + favorite.room.monthCost) : (favorite.room.costType + ' ' + favorite.room.monthCost)) : (favorite.room.costType + ' ' + favorite.room.deposit)}"></span>
+				    <div class="favoriteTypeContainer">
+				        <span class="favoriteType" th:text="${favorite.room.type}"></span>
+				    </div>
+				</div>
+				<div class="favoriteAddressContainer">
+				    <span class="favoriteAddress" th:text="${#strings.substringAfter(favorite.room.address, '시 ')}"></span>
+				</div>
+            </div>
+
+        </div>
+				
+		<div id="comparisonContainer" class="hidden-div">
+		    <div th:each="favorite, status : ${favorites}" class="comparison-item">
+		    	<div class="favorite-building">
+				    <span th:text="${favorite.room.buildingName}"></span>
+				<button class="delete-button">X</button>
+				</div>
+		    	<br />
+				<img th:src="@{/room/photo(roomId=${favorite.room.roomId})}" class="room-image" />
+	    		<div class="favorite-address" th:text="${favorite.room.address}"></div>
+		        <div class="favorite-id" data-favorite-id="${favorite.favoriteId}" th:text="${favorite.favoriteId}"></div>		        
+		        <div class="favorite-type" th:text="${favorite.room.type}"></div>
+		        <div class="favorite-cost" >
+					<span th:text="${#strings.equals(favorite.room.costType, '월세') ? (favorite.room.deposit != 0 ?
+													(favorite.room.costType + ' ' + favorite.room.deposit + '/' + favorite.room.monthCost) 
+													: (favorite.room.costType + ' '  + favorite.room.monthCost)) 
+													: (favorite.room.costType + ' ' + favorite.room.deposit)}">
+			    	</span>		      
+			    </div>  
+				<div class="favorite-manageC" th:text="'관리비 매월 ' + ${favorite.room.manageCost} + '만원'"></div>
+		        <div class="favorite-floor" th:text="${favorite.room.roomFloor} + '층 / ' + ${favorite.room.totalFloor} + '층'"></div>
+		        <div class="favorite-size" th:text="${favorite.room.size} + ' ㎡'"></div>
+		        <div class="favorite-isroomIn" th:text="${favorite.room.isRoomIn ? '즉시 입주 가능' : '즉시 입주 불가'}"></div>
+		        <hr class = "custom-hr"/>	
+		        
+		        <div class="favorite-direction" th:text="${favorite.room.direction} + '향'"></div>
+		        <div class="favorite-parkingInfo" th:text="'주차장 ' + ${favorite.room.parkingInfo}"></div>
+		        <div class="favorite-isElevator" th:text="${favorite.room.isElevator ? '엘리베이터 있음' : '엘리베이터 없음'}"></div>
+		        <div class="favorite-heatInfo" th:text="${favorite.room.heatInfo}"></div>
+		        <div class="favorite-internetInfo" th:text="${favorite.room.internetInfo}"></div>
+		        <hr class = "custom-hr"/>
+		        
+		        <div class="favorite-genderInfo" th:text="${favorite.room.genderInfo}"></div>
+		        <div class="favorite-security" th:text="${favorite.room.securityInfo}"></div>
+		        <hr class = "custom-hr"/>
+
+
+				
+				<h3 class="favoriteOptionTitle">공용옵션</h3>				
+				<div class="favoriteOptionTrue">
+				    <div th:each="roomOption : ${roomOptions}" th:if="${roomOption.room.roomId == favorite.room.roomId}">
+				        <div th:each="optionType : ${roomOptionTypes}" th:if="${optionType.optionType == roomOption.optionType.optionType && optionType.isShare == true}" th:text="${roomOption.optionType.optionName}">
+				        	<span th:text = "${roomOption.optionType.optionName}"></span>												
+				        </div>
+				    </div>    
+				</div>
+				
+				
+				<h3 class="favoriteOptionTitle">방옵션</h3>				
+				<div class="favoriteOptionFalse">
+				    <div th:each="roomOption : ${roomOptions}" th:if="${roomOption.room.roomId == favorite.room.roomId}">
+				        <span th:each="optionType : ${roomOptionTypes}" th:if="${optionType.optionType == roomOption.optionType.optionType && optionType.isShare == false}" th:text="${roomOption.optionType.optionName}"></span>
+				    </div>
+				</div>
+
+				<hr class = "custom-hr"/>		                		        
+
+		        
+		        <h3 class="favoriteOfferTitle">제공식사</h3>
+		        <div class="favoriteFoodOffer"> 
+					<div class="favorite-food" th:if="${not #strings.isEmpty(favorite.room.foodOffer)}">
+						<span th:text="${favorite.room.foodOffer}"></span>
+					</div>
+					<div class="favorite-food" th:if="${#strings.isEmpty(favorite.room.foodOffer)}">
+						<span>-</span>
+					</div>
+				</div>
+				
+				
+		        <h3 class="favoriteOfferTitle">제공비품</h3>
+		        <div class="favoriteAmenityOffer"> 
+					<div class="favorite-amenity" th:if="${not #strings.isEmpty(favorite.room.amenityOffer)}">
+					    <span th:text="${favorite.room.amenityOffer}"></span>
+					</div>
+					<div class="favorite-amenity" th:if="${#strings.isEmpty(favorite.room.amenityOffer)}">
+					    <span>-</span>
+					</div>
+				</div>
+				
+				
+				<hr class = "custom-hr"/>
+				
+				
+				<h3 class="memoTitle">메모</h3>		            
+	            <div class="favorite-memo">
+	                <form class="memo-form">
+	                    <input type="hidden" name="favoriteId" th:value="${favorite.favoriteId}" />
+						<textarea class="memo" name="memo" placeholder="메모할 사항" th:text="${favorite.memo}"></textarea>	<br />					
+						<button class="memo-button" type="button" onclick="saveMemo(this)">저장</button>
+	                </form>
+	            </div>
+		        
+		    </div>
+		</div>
+		
+	</div>	
+    </th:block>
+	
+	
+	
+	
+	
+    <th:block layout:fragment="customScript">
+        <script th:inline="javascript" type="text/javascript">
+      
+        
+            let currentIndex = 0;
+            let favorites = document.getElementsByClassName("favorite-item");
+            let totalFavorites = favorites.length; // 전체 즐겨찾기 항목의 개수
+            let visibleFavorites = 4; // 한 번에 보여줄 즐겨찾기 항목의 수
+            let maxCheckboxCount = 4; // 최대 선택 가능한 체크박스 수
+            updateFavoriteVisibility(); // 초기 로딩 시 첫 4개의 즐겨찾기 항목 표시
+			            
+            function filterFavorites() {
+                let selectedFavoriteIds = [];
+                let checkboxes = document.getElementsByName("favoriteIds");
+                let checkedCount = 0; //선택된 체크박스의 개수를 저장할 변수
+
+                for (let i = 0; i < checkboxes.length; i++) {
+                    if (checkboxes[i].checked) {
+                        checkedCount++;
+
+                        if (checkedCount <= maxCheckboxCount) {
+                            selectedFavoriteIds.push(checkboxes[i].value);
+                        } else {
+                            checkboxes[i].checked = false; // 4개를 초과해서 선택한 경우 체크 해제
+                        }
+                    } else {
+                        // 체크박스가 선택되지 않은 경우에도 selectedFavoriteIds 배열에서 해당 값을 제거
+                        let index = selectedFavoriteIds.indexOf(checkboxes[i].value);
+                        if (index > -1) {
+                            selectedFavoriteIds.splice(index, 1);
+                        }
+                    }
+                }
+
+                if (checkedCount > maxCheckboxCount) {
+                    alert("매물 비교는 최대" + maxCheckboxCount + "개까지 선택할 수 있습니다!");
+                }
+
+                let comparisonItems = document.getElementsByClassName("comparison-item");
+
+                for (let i = 0; i < comparisonItems.length; i++) {
+                    let favoriteId = comparisonItems[i].getElementsByClassName("favorite-id")[0].textContent;
+                    let shouldDisplay = selectedFavoriteIds.includes(favoriteId);
+
+                    if (shouldDisplay) {
+                        comparisonItems[i].classList.remove("hidden-div"); //선택된 찜 목록에 해당하는 비교 항목을 보이도록
+                    } else {
+                        comparisonItems[i].classList.add("hidden-div");
+                    }
+                }
+
+                let comparisonContainer = document.getElementById("comparisonContainer");
+                comparisonContainer.classList.remove("hidden-div");
+            }
+
+            
+            function showPreviousFavorites() {
+                currentIndex = (currentIndex - 4) ;
+                updateFavoriteVisibility();
+            }
+
+            function showNextFavorites() {
+                currentIndex = (currentIndex + 4) ;
+                updateFavoriteVisibility();
+            }
+			           
+            function updateFavoriteVisibility() {
+                for (let i = 0; i < totalFavorites; i++) {
+                    if (i >= currentIndex && i < currentIndex + visibleFavorites) {
+                        favorites[i].style.display = "inline-block";
+                    } else {
+                        favorites[i].style.display = "none";
+                    }
+                }
+
+                let filterLeftArrow = document.getElementById("filterLeftArrow");
+                let filterRightArrow = document.getElementById("filterRightArrow");
+
+                if (currentIndex === 0) {
+                    filterLeftArrow.style.display = "none"; 
+                } else {
+                    filterLeftArrow.style.display = "inline-block"; 
+                }
+
+                if (currentIndex + visibleFavorites >= totalFavorites) {
+                    filterRightArrow.style.display = "none"; 
+                } else {
+                    filterRightArrow.style.display = "inline-block"; 
+                }
+            }
+            
+            function deselectCheckboxes() {    
+                let checkboxes = document.getElementsByName("favoriteIds");
+                let comparisonItems = document.getElementsByClassName("comparison-item");
+
+                for (let i = 0; i < checkboxes.length; i++) {
+                    checkboxes[i].checked = false;
+                }
+
+                for (let i = 0; i < comparisonItems.length; i++) {
+                    comparisonItems[i].classList.add("hidden-div");
+                }
+
+                let comparisonContainer = document.getElementById("comparisonContainer");
+                comparisonContainer.classList.add("hidden-div");
+            }
+
+            
+            
+            
+            function saveMemo(button) {
+                let form = button.closest(".memo-form");
+                let formData = new FormData(form);
+
+                let xhr = new XMLHttpRequest();
+                xhr.open("POST", "/saveMemo");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        alert("메모가 저장되었습니다!");
+                    }
+                };
+                xhr.send(formData);
+            }
+            
+ 
+			document.addEventListener('DOMContentLoaded', function() {
+			  let deleteButtons = document.querySelectorAll('.delete-button');
+			
+			  deleteButtons.forEach(function(deleteButton) {
+			    deleteButton.addEventListener('click', function() {
+			      let comparisonItem = deleteButton.closest('.comparison-item');
+			      let favoriteIdElement = comparisonItem.getElementsByClassName('favorite-id')[0];  
+			      let favoriteId = favoriteIdElement.textContent;
+			      let checkbox = document.querySelector('input[type="checkbox"][name="favoriteIds"][value="' + favoriteId + '"]');
+			      
+			      if (checkbox) {
+			        checkbox.checked = false;
+			        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+			      }
+			
+			      if (comparisonItem) {
+			        comparisonItem.classList.add('hidden-div');
+			      }
+			    });
+			  });
+
+			  
+			  let checkboxes = document.getElementsByName('favoriteIds');
+			
+			  checkboxes.forEach(function(checkbox) {
+			    checkbox.addEventListener('change', function() {
+			      let favoriteId = checkbox.value;
+			      let favoriteIdElement = document.querySelector('.comparison-item .favorite-id[data-favorite-id="' + favoriteId + '"]');
+			      if (favoriteIdElement) {
+			          let comparisonItem = favoriteIdElement.closest('.comparison-item');
+			      }
+			      
+			      if (checkbox.checked && comparisonItem) {
+			        comparisonItem.classList.remove('hidden-div');
+			      }
+			    });
+			  });
+			});
+			         
+			function toggleSideMenu() {
+			    let sideMenu = document.getElementById("sideMenu");
+			    sideMenu.classList.toggle("show");
+			}
+			
+         
+        </script>
+    </th:block>
+</html>

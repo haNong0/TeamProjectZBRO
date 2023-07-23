@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/mypage_layout}">
+<th:block layout:fragment="customStyle">
+<style th:inline="css" type="text/css">
+    .memberWrapTitle {
+        text-align: center;
+        font-size: 30px;
+        font-weight: 550;
+        margin: 70px 0 50px 0;
+    }
+    .memberWrap {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 50px 0; 
+        margin-bottom: 200px;
+    }
+    
+    
+    .profileWrap {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 50px;
+    }
+	.profile-image {
+	  display: flex;
+	  justify-content: center;
+	  align-items: center;
+	  width: 200px;
+	  height: 200px;
+	  border-radius: 50%;
+	  overflow: hidden;
+	  margin-bottom: 20px;
+	}
+	
+	input {
+		width : 350px;
+		height : 40px;
+		border: 2px solid #f2f2f2;
+		padding : 5px;
+		border-radius: 5px; 
+	}
+	
+	label {
+		font-weight: 550;
+		width: 100px; 
+		margin-bottom: 30px;
+		margin-right : 50px; 
+		white-space: nowrap;
+	}	
+	
+	input[readonly] {
+		background-color: #f2f2f2;
+	}	
+	
+	.button-group {
+	  display: flex;
+	  justify-content: center;
+	  gap: 20px;
+	  margin-top: 50px;
+	}
+	
+
+	#imageButton {
+		background-color : white;
+		border: 2px solid #f2f2f2;
+		padding : 5px;
+		border-radius: 5px; 
+	}
+		
+	#editButton {
+		background-color : white;
+		border: 2px solid #858585;
+		padding : 5px 15px;
+		border-radius: 5px; 
+	}
+	
+	#submitButton {
+		background-color : white;
+		border: 2px solid #858585;
+		padding : 5px 15px;
+		border-radius: 5px; 
+	}
+	
+	#deleteButton {
+		background-color : #858585;
+		border: 2px solid #858585;
+		padding : 5px 15px;
+		border-radius: 5px; 
+		color: white;
+	}
+</style>
+
+</th:block>
+<th:block layout:fragment="content">
+    <div class=memberWrapTitle>회원 정보</div>
+    <div class=memberWrap>   
+	    <form id="userInfoForm" action="/memberInfo" method="post" enctype="multipart/form-data">
+	      <div class= profileWrap>
+			<div class="profile-image">
+			    <img id="profileImage" th:src="@{'/consumer/profile/photo?consumerId=' + ${consumerUser.consumerId}}" alt="프로필">
+			</div>
+	        <input type="file" id="imageUpload" name="imageUpload" style="display: none;" accept="image/*">
+	        <button type="button" onclick="document.getElementById('imageUpload').click();" id="imageButton" style="display: none;">이미지 변경</button>
+	      </div> 
+	      <div>
+	        <label for="email">이메일</label>
+	   	     <input type="text" id="email" name="email" th:value="${consumerUser.email}" readonly>
+	      </div>
+	      <div>
+	        <label for="name">이름</label>
+	        <input type="text" id="name" name="name" th:value="${consumerUser.name}" readonly required="required">
+	      </div>
+	      <div id="passwordSection">
+	        <label for="password">비밀번호 변경</label>
+	        <input type="password" id="password" name="password" th:value="${consumerUser.password}" autocomplete="current-password" readonly required="required">
+	      </div>
+	      <div class="button-group">
+	        <button type="button" id="editButton" onclick="enableEdit()">수정</button>
+	        <button type="submit" id="submitButton" style="display: none;">수정완료 </button>
+	        <button type="button" id="deleteButton" onclick="confirmMemberDelete()">탈퇴</button>
+	      </div>
+	    </form>
+	    <form id="memberDeleteForm" action="/memberDelete" method="post">
+	      <input type="hidden" name="_method" value="DELETE">
+	    </form>
+    </div>
+  </th:block>
+</th:block>
+<th:block layout:fragment="customScript">
+	<script th:inline="javascript" type="text/javascript">
+    function enableEdit() {
+        document.getElementById('name').readOnly = false;
+        document.getElementById('password').readOnly = false;
+        document.getElementById('passwordSection').classList.remove('readonly');
+        document.getElementById('editButton').style.display = 'none';
+        document.getElementById('submitButton').style.display = 'inline-block';
+        document.getElementById('imageUpload').disabled = false;
+        document.getElementById('imageButton').style.display = 'inline-block';
+    }
+    
+    function confirmMemberDelete() {
+        if (confirm("탈퇴하시겠습니까?")) {
+          alert("탈퇴되었습니다.");
+          document.getElementById('memberDeleteForm').submit();
+        }
+    }
+    
+    document.getElementById('imageUpload').addEventListener('change', function(event) {
+        let file = event.target.files[0];
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('profileImage').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+    
+    document.getElementById('userInfoForm').addEventListener('submit', function(event) {
+        alert("수정되었습니다.");
+    });
+    </script>
+</th:block>
+
+    

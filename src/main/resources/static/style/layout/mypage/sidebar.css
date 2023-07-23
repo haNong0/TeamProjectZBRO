@@ -1,0 +1,62 @@
+aside.sidebar {
+    min-width: 230px;
+	border-right: 2px solid #ccc; 
+	margin-bottom: 20px;
+}
+
+div.profile-wrapper {
+	margin-bottom: 30px;
+}
+
+.consumer-image {
+    width: 130px;
+    height: 130px; 
+    border-radius: 50%; 
+    overflow: hidden; 
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+
+.consumer-image img{
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+p.consumer-name{
+	text-align: center;
+	font-weight: bold;
+}
+
+
+div.menu-wrapper {
+	padding: 0 10px;
+}
+
+.menu-wrapper .menu{
+	margin-top: 18px;
+	padding: 0 5px;
+}
+
+.menu-wrapper p.outer-menu{
+	font-weight: bold;
+	font-size: 1.3rem;
+	margin: 0;	
+}
+
+.menu-wrapper ul{
+	list-style-type: none;
+	font-size: 1rem;
+	padding-left: 1.5rem;
+}
+
+.menu-wrapper li{
+	margin: 4px 0;
+}
+
+.menu-wrapper a {
+	color: rgb(50, 50, 50);;
+	text-decoration: none;
+}
+.menu-wrapper .inner-menu-list a {
+	color: rgb(80, 80, 80);
+}

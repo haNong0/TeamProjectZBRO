@@ -1,0 +1,167 @@
+
+.all {
+	
+   width: 100%; 
+  border: 3px solid;
+  border-color:#F3F3F3;
+   padding:50px;
+   padding-left:150px;
+   padding-right:150px;
+   margin-bottom:40px;
+}
+
+/* .carousel slide {
+	width:100%
+	
+} */
+
+.sidemenu {
+	position: sticky;
+	 border: 1px solid;
+	 border-color:#F3F3F3;
+	 min-height: 100%;
+	  width:30%; 
+	 
+}
+
+.side-under {
+	position: sticky;
+	top:100px;
+}
+
+
+.main {
+	display: flex;
+	justify-content: space-between;
+}
+
+.roominfo {
+	width: 70%;
+	height:100%;
+}
+
+
+.roominfo-wrapper {
+	list-style:none;
+}
+
+.room-detail-wrapper {
+	list-style:none;
+}
+
+.costinfo-tag {
+	margin-bottom:35px;
+	
+}
+
+.detailinfo-tag {
+	margin-bottom:35px;
+}
+
+.optionmain {
+	margin-bottom:35px;
+}
+
+.location {
+	margin-top:100px;
+	margin-bottom:30px;
+	
+}
+
+.detail-wrapper {
+	margin-top:90px;
+	margin-bottom:50px;
+	
+}
+
+.detail-intro {
+	margin-top:30px;
+	margin-right:20px;
+	padding:30px;
+	background-color:#F3F3F3;
+	
+}
+
+.otherroom-wrapper {
+	display:flex;
+	flex-wrap:nowrap;
+
+}
+
+.otherroom {
+    width:33.33%;
+}
+
+
+
+.otherroomphoto {
+	height:160px;
+	width:170px;
+	
+}
+.review-wrapper {
+	display:flex;
+}
+
+/* 리뷰 기능 css */
+
+.rating {
+  display: inline-block;
+   border: 0;
+  margin-right: 15px;
+   direction: rtl; 
+}
+
+.rating > input {
+  display: none;
+   direction: ltr;
+}
+
+.rating > label {
+  color: #ddd;
+}
+
+  .rating > label:before {
+  display: inline-block;
+  font-size: 1rem;
+  padding: .3rem .2rem;
+  margin: 0;
+  cursor: pointer;
+  color: #86C69F  !important ;
+}  
+
+.rating input:checked ~ label,
+.rating label:hover,
+.rating label:hover ~ label {
+
+ color: #86C69F  !important; 
+}
+
+.rating input:checked + .rating label:hover,
+.rating input input:checked ~ label:hover,
+.rating input:checked ~ .rating label:hover ~ label,
+.rating label:hover ~ input:checked ~ label {
+	 color: #86C69F  !important;
+}
+/*리뷰 css끝*/
+
+.big-review {
+	
+	border: 2px solid;
+	border-color:#F3F3F3;
+	 padding:10px;
+	
+}
+
+.review-small-1 {
+	background-color:#F3F3F3;
+	
+}
+
+.review-small-2 {
+	background-color:#F3F3F3;
+	
+}
+
+.sidemenu-wrapper {
+	display:flex;

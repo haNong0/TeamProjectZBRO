@@ -1,0 +1,108 @@
+
+/*########## 상위 ##########*/
+aside {
+	width: 240px;
+	min-width: 240px;
+	height : auto;
+  	min-height: 100%;
+	background-color: #434343;
+	position: relative;
+	color: white;
+}
+
+
+.aside-inner {
+	display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 11px;
+    margin: 22px 10px;
+}
+
+.aside-inner > .aside-section {
+	width: 100%;
+}
+
+
+/*########## 프로필 ##########*/
+.aside-inner .profile-wrapper {
+	padding: 30px 0;
+	border-top: 1px solid lightgray;
+	border-bottom: 1px solid lightgray;
+	text-align: center;
+}
+
+.aside-inner .profile-wrapper div.profile-image-wrapper {
+	margin: 0 auto;
+	width: 80px;
+	height: 80px;
+}
+
+.aside-inner .profile-wrapper img.profile-image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 50%;
+}
+
+.aside-inner .profile-wrapper p.username {
+	padding: 0;
+	margin: 0;
+	margin-top: 5px;
+	margin-bottom: -5px;
+	font-weight: bold;
+}
+
+.aside-inner .profile-wrapper span.admission-info {
+	color: gray;
+	font-size: 12px;
+	
+}
+
+
+/*########## 로고 ##########*/
+.logo-wrapper {
+	display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.logo-wrapper img.logo {
+	width: 110px;
+}
+
+.logo-wrapper a.go-home {
+	font-size: 11px;
+	text-decoration: none;
+	color: gray;
+}
+
+
+/*########## 메뉴 ##########*/
+.menu-wrapper .menu{
+	margin-top: 18px;
+	padding: 0 5px;
+}
+
+.menu-wrapper p.outer-menu{
+	font-weight: bold;
+	font-size: 1.3rem;
+	margin: 0;	
+}
+
+.menu-wrapper ul{
+	list-style-type: none;
+	font-size: 1rem;
+	padding-left: 1.5rem;
+}
+
+.menu-wrapper li{
+	margin: 4px 0;
+}
+
+.menu-wrapper a{
+	color: white;
+	text-decoration: none;
+}

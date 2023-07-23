@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+
+
+<th:block layout:fragment="content">
+	<!-- <th:block th:if="${type}=='꿀팁'">Tip</th:block> -->
+	<span th:if="${type}=='꿀팁'" th:text="Tip"></span>
+	<span th:if="${type}=='질문'" th:text="Question"></span>
+	<h1 th:text="${type}"></h1>
+	<br />
+	<ul id="category">
+	    <li th:each="category : ${categories}" th:style="(${category.name()} == ${ct}) ? 'color: black' : 'color: gray'" >
+	        <a th:href="@{/post_list(categoryType=${category}, type=${type})}" th:text="${category}" ></a>
+	    </li>
+	</ul>
+	
+	<br />
+	<h4><span th:text="${type}"/>게시판 - <span th:text="${ct}"/></h4>
+	<div>
+		<form action="/post_list" method="post" id="postForm">
+			<input type="hidden" id="type" name="type"  th:value="${type}">
+			<input type="hidden" id="categoryType" name="categoryType"  th:value="${ct}">
+			<input type="hidden" id="page" name="page"  th:value="0">
+			<input type="hidden" id="pageSize" name="pageSize" th:value="${ps}">
+			<select name="searchType">
+	            <option value=title selected>제목</option>
+	            <option value="content">내용</option>
+	            <option value="user">작성자</option>
+	        </select>
+	        <input type="text" name="searchWord"/>
+			<button type="submit">검색</button>
+		</form>
+	</div>
+	<label th:text="|${pageable.getPageNumber()*pageable.getPageSize()+1} of ${pageResult.getTotalElements()}|"></label>
+	
+	<hr />
+	<hr />
+	
+	<div>
+		<table>
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th>제목</th>
+					<th>작성자</th>
+					<th>작성일</th>
+					<th>조회수</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="post,state : ${pageResult.getContent()}">
+					<td th:text="${post.postId}"></td>
+					<td><a th:href="@{/post_detail(postId=${post.postId})}" th:text="${post.title}"></a></td>
+					<td th:text="${post.user.name}"></td>
+					<td th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd')}"></td>
+					<td th:text="${post.viewCount}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div class="row align-items-start mt-3">
+		<ul class="col-9 btn-sm pagination justify-content-center">
+			<th:block th:if="${bp > 1}">
+				<li><a th:href="@{/post_list(page=0, pageSize=${ps}, searchType=@{st}, searchWord=${sw}, type=${type}, categoryType=${ct})}" class="page-link"><i class="fas fas-backward"></i></a></li>
+				<li><a th:href="@{/post_list(page=${bp-ns-1}, pageSize=${ps}, searchType=${st}, searchWord=${sw}, type=${type}, categoryType=${ct})}" class="page-link"><i class="fas fas-backward"></i></a></li>
+			</th:block>
+			
+			<th:block th:each="page : ${#numbers.sequence(pageInfo.getBeginPage(), pageInfo.getEndPage())}" th:if="${page > 0}">
+				<li class="page-item" th:classappend="${(page-1)==pageInfo.getPage() ? 'active' : ''}"><a class="page-link" th:href="@{/post_list(page=${page-1}, pageSize=${ps}, searchType=${st}, searchWord=${sw}, type=${type}, categoryType=${ct})}" th:text="${page}" ></a></li>
+			</th:block>	
+			
+			<th:block th:if="${ ep < tp }">
+				<li class="page-item"><a th:href="@{/post_list(page=${ep}, pageSize=${ps}, searchType=${st}, searchWord=${sw}, type=${type}, categoryType=${ct})}" class="page-link"><i class="fas fa-forward"></i></a></li>				
+				<li class="page-item"><a th:href="@{/post_list(page=${tp-1}, pageSize=${ps}, searchType=${st}, searchWord=${sw}, type=${type}, categoryType=${ct})}" class="page-link"><i class="fas fa-fast-forward"></i></a></li>				
+			</th:block>
+		</ul> pagination
+		
+		<!-- pageSize  --> 
+		<div class="col-auto me-1">
+			<div class="input-group mb-3">
+				<span class="input-group-text"><i class="fas fa-list"></i></span>
+				<select class="col-auto form-select" id="rowPerPage" name="rowPerPage">
+						<th:block th:each="num : ${#numbers.sequence(10, 50, 10)}">
+			    		<option th:value="${num}" th:text="${num}" th:attr="selected=${ps==num ? 'true' : 'false'}"></option>										   					
+			    	</th:block>											
+				</select>
+			</div>
+		</div>
+	</div>
+	
+	<a th:href="@{/post_add(type=${type}, categoryType=${ct})}" class="btn">글쓰기</a>
+
+</th:block>
+	
+<th:block layout:fragment="customScript">
+		<!-- pageSize 변경 -->
+		<script>
+			$(function() {
+				
+				// 목록 갯수 변경
+				$('#rowPerPage').change(function(e) {
+					$('#page').val(0);
+					$('#pageSize').val($(this).val());
+					$('#postForm').submit();
+				});	//#rowPerPage
+	
+			});
+		</script>
+</th:block>
+
+</body>
+</html>

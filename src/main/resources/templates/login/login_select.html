@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<th:block layout:fragment="customStyle">
+<style th:inline="css" type="text/css">
+	
+	.login-select-main {
+		margin: 140px 20px 0;
+	}
+	
+	.login-select-wrapper {
+		text-align: center;
+	}
+	
+	.login-select-wrapper h1.title {
+		margin-bottom: 7.5vh;
+	}
+	
+	.login-select-wrapper button.login-button {
+		background-color: lightgray;
+		word-break: keep-all;
+		border: 0;
+		font-size: xx-large;
+		width: 210px;
+		height: 180px;
+		margin: 0 50px;
+		padding: 20px;
+	}
+	
+	button.login-button:hover{
+		background-color: gray;
+	}
+	
+	
+</style>
+
+</th:block>
+<th:block layout:fragment="content">
+	
+	<div class="login-select-main">
+		<div class="login-select-wrapper">
+			<h1 class="title">로그인</h1>
+			<button type="button" class="login-button consumer-user-login" th:onclick="|location.href='@{/consumer/login}'|">구매자 로그인</button>
+			<button type="button" class="login-button seller-user-login" th:onclick="|location.href='@{/seller/login}'|">판매자 로그인</button>
+		</div>
+	</div>
+	
+</th:block>
+<th:block layout:fragment="customScript">
+	<script th:inline="javascript" type="text/javascript">
+		
+	</script>
+</th:block>
+    
+    

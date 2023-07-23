@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="navbar">
+
+	<nav class="navigation">
+		<a th:href="@{/seller}" class="nav-title">판매자 페이지</a>
+		<div class="login-wrapper">
+			<a th:href="@{/logout}">로그아웃</a>
+		</div>
+	</nav>
+
+</th:block>
+</body>
+</html>

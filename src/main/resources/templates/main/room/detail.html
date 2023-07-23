@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+<th:block layout:fragment="customStyle">
+<link href="/style/main/room/room_detail.css" rel="stylesheet" type="text/css" />
+	<style th:inline="css" type="text/css">
+</style>
+
+</th:block>
+<th:block layout:fragment="content">
+	<!--상세페이지 이미지 보이기  -->
+	<div class="all">
+		<div id="carouselExampleIndicators" class="carousel slide"
+			data-bs-ride="carousel">
+			<div class="carousel-indicators">
+				<button type="button" data-bs-target="#carouselExampleIndicators"
+					data-bs-slide-to="0" class="active" aria-current="true"
+					aria-label="Slide 1"></button>
+				<button type="button" data-bs-target="#carouselExampleIndicators"
+					data-bs-slide-to="1" aria-label="Slide 2"></button>
+				<button type="button" data-bs-target="#carouselExampleIndicators"
+					data-bs-slide-to="2" aria-label="Slide 3"></button>
+			</div>
+			<div class="carousel-inner" align="center">
+				<div class="carousel-item active"
+					th:each="roomPhoto : ${roomPhotoList}">
+				<img th:src="@{/room/photodetail(photoId=${roomPhoto.photoId})}"
+						class="d-block w-40" alt="roominfo">
+				</div>
+			</div>
+			<button class="carousel-control-prev" type="button"
+				data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Previous</span>
+			</button>
+			<button class="carousel-control-next" type="button"
+				data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Next</span>
+			</button>
+		</div>
+		<!--이미지파일 업로드 끝  -->
+		<!-- 상세이미지 종료 -->
+		<div class="main">
+			<!-- 전체를 묶어줄   -->
+			<div class="roominfo">
+				<!--가격정보 -->
+				<div>
+					<h4 class="costinfo-tag">가격정보</h4>
+					<div class="roominfo-1">
+						<ul class="roominfo-wrapper" th:each="room : ${room}">
+							<li>월세 :<span th:text="${room.monthCost}"></span></li>
+							<li>관리비:<span th:text="${room.manageCost}"></span></li>
+							<li>주차가능여부:<span th:text="${room.parkingInfo}"></span></li>
+							<li>즉시입주여부:<span th:text="${room.isRoomIn}"></span></li>
+						</ul>
+					</div>
+					<h4 class="detailinfo-tag">상세정보</h4>
+					<div class="room-detail-info" th:each="room : ${room}">
+						<ul class="room-detail-wrapper">
+							<li>방종류:<span th:text="${room.type}"></span></li>
+							<li>방층:<span th:text="${room.roomFloor}"></span> /건물층:<span
+								th:text="${room.totalFloor}"></span></li>
+							<li>호수:<span th:text="${room.roomNumber}"></span></li>
+							<li>면적:<span th:text="${room.size}"></span></li>
+							<li>방향:<span th:text="${room.direction}"></span></li>
+							<li>엘리베이터:<span th:text="${room.isElevator}"></span></li>
+							<li>냉난방:<span th:text="${room.heatInfo}"></span></li>
+							<li>인터넷:<span th:text="${room.internetInfo}"></span></li>
+							<li>안전시설:<span th:text="${room.securityInfo}"></span></li>
+						</ul>
+						<th:blcok th:if="${room.type}== '고시원'">
+							<li>남여층 분리:<span th:text="${room.genderInfo}"></span></li>
+						</th:blcok>
+						<th:blcok th:unless="${room.type} != '고시원'"></th:blcok>
+					</div>
+					<h4 class="optionmain">옵션 및 서비스</h4>
+					<div>
+						<h4>공용옵션</h4>
+						<div th:each="roomOption : ${roomOptions}">
+							<span th:text="${roomOption.optionType.optionName}"></span>
+						</div>
+						<h4>방옵션</h4>
+						<div th:each="roomOption : ${roomOptions}">
+							<th:block th:if="${roomOption.optionType.isShare} == false">
+								<span th:text="${roomOption.optionType.optionName}"></span>
+							</th:block>
+							<th:block th:unless="${roomOption.optionType.isShare} == true">
+								<!-- <span th:text = "${roomOption.optionType.optionName}"></span> -->
+							</th:block>
+						</div>
+					</div>
+					<!--가격정보 종료  -->
+
+					<!--지도시작  -->
+					<div th:each="room : ${room}">
+
+						<h4 class="location">위치 및 교통정보</h4>
+						<span th:text="${room.address}+${room.transportInfo}"></span>
+
+						<!-- 지도를 표시할 div 입니다 -->
+						<div id="map" style="width: 400px; height: 300px;"></div>
+					</div>
+				</div>
+				<!--지도 종료  -->
+
+				<!--상세 소개  -->
+				<div class="detail-wrapper" th:each="room : ${room}">
+					<h4>상세소개</h4>
+					<div class="detail-intro" th:text="${room.description}"></div>
+				</div>
+				<!--상세소개 종료  -->
+
+				<!--같은 건물 다른방  -->
+				<h4>판매자의 다른 매물</h4>
+				<div class="otherroom-wrapper">
+					<div class="otherroom" th:each="roomsame : ${roomsame}">
+						<a th:href="@{/room/detail/{roomId}(roomId=${roomsame.roomId})}"><img class="otherroomphoto" th:src="@{/room/photo(roomId=${roomsame.roomId})}" /></a>
+						<p>
+							<span th:text="${roomsame.costType}"></span>
+							<th:block th:if="${roomsame.costType.toString() == '월세'}">
+								<th:block th:if="${roomsame.deposit != 0}">
+									<span th:text="${roomsame.deposit}"></span>
+									<span>/</span>
+								</th:block>
+								<span th:text="${roomsame.monthCost}"></span>
+							</th:block>
+							<th:block th:if="${roomsame.costType.toString() == '전세'}">
+								<span th:text="${roomsame.deposit}"></span>
+							</th:block>
+							<span th:text="${roomsame.Type}"></span> <span
+								th:text="${roomsame.address}"></span>
+						</p>
+					</div>
+				</div>
+				<!--같은 건물 다른방 종료  -->
+
+				<!-- 후기 작성 -->
+				<div>
+					<div class="review-wrapper">
+					<h4>실생활 후기</h4>
+					<!-- 후기 작성하기 버튼 -->
+					<button type="button" class="btn btn-primary"
+						data-bs-toggle="modal" data-bs-target="#exampleModal">등록하기</button>
+					</div>
+					<!-- 후기 작성하는 창  -->
+					<div class="modal fade" id="exampleModal" tabindex="-1"
+						aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title" id="exampleModalLabel">실생활후기작성</h4>
+									<button type="button" class="btn-close" data-bs-dismiss="modal"
+										aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+								<form action="/room/review" method="post">
+									<input type="hidden" name="roomId" value="2" />
+									<span class="text-bold">별점을 선택해주세요</span>
+									<div class="rating">
+ 										<input type="radio" id="star5" name="score" value="5">
+ 										<label for="star5"><i class="bi bi-star-fill"></i></label>
+  										<input type="radio" id="star4" name="score" value="4">
+										<label for="star4"><i class="bi bi-star-fill"></i></label>
+										<input type="radio" id="star3" name="score" value="3">
+										<label for="star3"><i class="bi bi-star-fill"></i></label>
+										<input type="radio" id="star2" name="score" value="2">
+										<label for="star2"><i class="bi bi-star-fill"></i></label>
+										<input type="radio" id="star1" name="score" value="1">
+										<label for="star1"><i class="bi bi-star-fill"></i></label>
+									</div>
+									<div class="comment">
+										<textarea class="form-control" rows="2" style="max-height:100px" name="content" placeholder="리뷰 내용을 입력하세요"></textarea>
+									</div>
+									<div class="modal-footer">
+										<button type="submit" class="btn btn-primary">등록하기</button>
+									</div>
+								</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--후기 작성 종료-->
+				<!--후기를 표시할 자리-->
+				<div class="big-review" th:each="roomReview, iterStat : ${roomReviews}">
+				  <!--후기1  -->
+				  <div class="review1" th:if="${iterStat.index} &lt; 2">
+				    <div class="review-small-1">
+				      <img class="review-member1" src="" alt="" />
+				      <p th:text="${roomReview.room.roomId}">유저이름 넣을자리</p>
+				      <th:block th:if="${roomReview.score == 5}">
+						 <i class="bi bi-star-fill"></i>
+						 <i class="bi bi-star-fill"></i>
+						 <i class="bi bi-star-fill"></i>
+						 <i class="bi bi-star-fill"></i>
+						 <i class="bi bi-star-fill"></i>
+					 </th:block>
+					 <th:block th:if="${roomReview.score == 4}">
+					    <i class="bi bi-star-fill"></i>
+					    <i class="bi bi-star-fill"></i>
+					    <i class="bi bi-star-fill"></i>
+					    <i class="bi bi-star-fill"></i>
+					</th:block>
+					 <th:block th:if="${roomReview.score == 3}">
+					    <i class="bi bi-star-fill"></i>
+					    <i class="bi bi-star-fill"></i>
+					    <i class="bi bi-star-fill"></i>
+					</th:block>
+					<th:block th:if="${roomReview.score == 2}">
+					    <i class="bi bi-star-fill"></i>
+					    <i class="bi bi-star-fill"></i>
+					</th:block>
+					<th:block th:if="${roomReview.score == 1}">
+					    <i class="bi bi-star-fill"></i>
+					    <i class="bi bi-star-fill"></i>
+					</th:block>
+				      <p th:text="${roomReview.createDate}"></p>
+				      <p th:text="${roomReview.content}"></p>
+				    </div>
+				  </div>
+				</div>
+				<!--후기를 표시할 자리 종료-->
+			</div>
+			<!-- 전체를 묶어줄 종료 -->
+			
+			
+			<!--사이드 메뉴  -->
+			<div class="sidemenu">
+				<div class="side-under">
+				    <a href="#" onclick="clip(); return false;">
+				        <i class="bi bi-box-arrow-up-right"></i>
+				    </a>
+				    <div th:each="room : ${room}">
+				        <div th:text="${room.buildingName}"></div>
+				        <div>
+				            <h1 th:text="${room.monthCost}+${room.deposit}">월세:</h1>
+				            <p th:text="${room.address}"></p>
+				        </div>
+				        <ul>
+				            <li th:text="${room.type}"></li>
+				            <li th:text="${room.size}"></li>
+				            <li th:text="${room.roomFloor}+${room.totalFloor}">층수</li>
+				            <li th:text="${room.manageCost}">관리비</li>
+				        </ul>
+				        <p th:text="${room.seller.brokerName}">판매부동산</p>
+				    </div>
+				    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">연락처보기</button>
+				   <div class="sidemenu-wrapper">
+					    <div class="favorite-button">
+			    			<button type="button" onclick="doFavorite(this)" th:if="${isFavorite==false}" th:data-room="${room.roomId}">
+			    				<i class="bi bi-heart"></i>
+			    			</button>
+			    			<button type="button" onclick="doUnfavorite(this)" th:if="${isFavorite==true}" th:data-favorite="${roomDetailFavorite.favoriteId}" th:data-room="${room.roomId}">
+			    				<i class="bi bi-heart-fill"></i>
+			    			</button>
+		    			</div>
+	    			</div>
+				</div>
+			</div>
+			<!--사이드 메뉴 종료  -->
+			
+			
+		</div>
+	 <!-- 모달창 시작 -->
+          <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+               <div class="modal-dialog">
+                   <div class="modal-content">
+                       <div class="modal-header">
+                           <h1 class="modal-title fs-5" id="staticBackdropLabel">보던가말던가</h1>
+                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                       </div>
+                       <div class="modal-body">
+                           <h3>부동산명</h3>
+                           <p th:text="${room.seller.brokerName}">판매부동산</p>
+                              <i class="bi bi-telephone-fill"></i>
+                           <h3 th:text="${room.seller.tel1}+'-'+${room.seller.tel2}+'-'+${room.seller.tel3}">
+                           </h3>
+                           <p>안락한 공간 지브로</p>
+                       </div>
+                   </div>
+               </div>
+           </div>
+	</div>
+</th:block>
+
+
+<th:block layout:fragment="customScript">
+	<script type="text/javascript"
+		src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8797ef24169da67f855167ed9d5ded62&libraries=services"></script>
+
+	<script th:inline="javascript" type="text/javascript">
+		$(document).ready(function(){
+			var mapContainer = document.getElementById('map') // 지도를 표시할 div 
+			mapOption = {
+				center : new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+				level : 3
+			// 지도의 확대 레벨
+			};
+
+			// 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+			var map = new kakao.maps.Map(mapContainer, mapOption);
+			
+			// 마커 생성하기
+			// 주소-좌표 변환 객체를 생성합니다
+	var geocoder = new kakao.maps.services.Geocoder();
+	// 주소를 객체에 담아옵니다. script단에서 thymeleaf사용법 참고!
+	var address = [[ ${room.address} ]];
+	// 주소로 좌표를 검색합니다
+	geocoder.addressSearch(address, function(result, status) {
+
+	    // 정상적으로 검색이 완료됐으면 
+	     if (status === kakao.maps.services.Status.OK) {
+
+	        var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+	        // 결과값으로 받은 위치를 마커로 표시합니다
+	        var marker = new kakao.maps.Marker({
+	            map: map,
+	            position: coords
+	        });
+
+	        // 인포윈도우로 장소에 대한 설명을 표시합니다
+	        var infowindow = new kakao.maps.InfoWindow({
+	            content: '<div style="width:150px;text-align:center;padding:6px 0;">골때리네</div>'
+	        });
+	        infowindow.open(map, marker);
+
+	        // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+	        map.setCenter(coords);
+	   
+	     }
+	    
+	    
+	});  
+		})
+//공유기능 메서드
+	function clip(){
+	
+			var url = '';
+			var textarea = document.createElement("textarea");
+			document.body.appendChild(textarea);
+			url = window.document.location.href;
+			textarea.value = url;
+			textarea.select();
+			document.execCommand("copy");
+			document.body.removeChild(textarea);
+			alert("URL이 복사되었습니다.")
+		}
+	
+	
+	//찜기능 a.jax
+	 function doUnfavorite(e){
+			let favId = e.attributes["data-favorite"].value;
+			
+			$.ajax({
+				type: "post",
+				url: '/room/unfavorite',
+				data: {"favoriteId":favId},
+				success: function(res) {
+					if(res == "success") {
+						console.log("unfavorite(favId="+favId+") : "+res);
+						favoriteToggle(e, false);
+					} else {
+						console.error("unfavorite failed... (favId="+favId+")");
+					}
+				},
+				error: function(error) {
+					console.log(error);
+				}
+			});
+		
+		} 
+		
+		 function doFavorite(e){
+			let roomId = e.attributes["data-room"].value;
+			
+			$.ajax({
+				type: "post",
+				url: '/room/favorite',
+				data: {"roomId":roomId},
+				success:function(res) {
+					if(res != null && res != "") {
+						console.log("favorited success! (favId="+res+")");
+						favoriteToggle(e, true, res);
+					} else {
+						console.error("favorited failed... (room"+roomId+")");						
+					}
+				},
+				error: function(error) {
+					console.error(error);
+				}
+			});  
+			
+		 }  
+		 
+	 	const heartElement = "<i class='bi bi-heart'></i>";
+		const heartFillElement = "<i class='bi bi-heart-fill'></i>";
+		function favoriteToggle(e, faved, favId) {
+			if(faved == true) {
+				e.setAttribute("data-favorite", favId);
+				e.setAttribute("onclick", "doUnfavorite(this);");
+				e.innerHTML = heartFillElement;
+			} else if(faved == false) {
+				e.removeAttribute("data-favorite");
+				e.setAttribute("onclick", "doFavorite(this);");
+				e.innerHTML = heartElement;
+			}
+		}
+	</script>
+</th:block>
+
+<th:block th:include="navbar"></th:block>
+<th:block th:include="footer"></th:block>

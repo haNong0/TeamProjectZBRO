@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/seller_layout}">
+<th:block layout:fragment="customStyle">
+	<style th:inline="css" type="text/css">
+	#searchForm {
+	    display: flex;
+	    justify-content: space-between;
+	    align-items: center;
+	    margin: 10px;
+	}	
+	#searchType {
+	    height: 30px;
+	}		
+	#searchInput {
+		height: 30px;
+	    width: 500px;
+	}
+	
+	#searchBtn{
+		height: 29px;
+		border: 1px solid ; 
+		border-radius: 3px;
+		margin-left: 5px;
+		
+	}		
+	.tableWrapper {
+	  border: 1px solid #ccc; 
+	  padding: 10px; 
+	}	
+	
+	table#roomTable{
+		width:100%;
+	}	
+	
+	#roomTable th, #roomTable td {
+	  border: 1px solid #ccc; 
+	  padding: 8px;
+	  text-align: center;		
+	}
+ 	
+	 #roomTable th {
+	  border-bottom: 2px solid #ccc;
+	  
+	}	
+
+	.deleteButtonWrapper{
+		text-align: right;
+	}
+	#deleteSelectedRooms{
+		border: 2px solid #ccc; 
+	    border-radius: 2px;
+	    margin: 15px 10px;
+	}
+	
+	.noResult {
+	        text-align: center;
+	        margin-top: 50px;
+	        font-size: 20px;
+	        color: #999;	
+	}	
+	 
+    .pagination {
+        margin: 35px 0;
+        justify-content: center;
+    }
+    
+    .pagination ul {
+        list-style: none;
+        padding: 0;
+        display: inline-block;
+    }
+    
+    .pagination ul li {
+        display: inline-block;
+    }
+    
+    .pagination ul li a {
+        display: inline-block;
+        padding: 2px 10px;
+        margin-right: 5px;
+        text-decoration: none;
+        background-color: white;
+        color: black;
+        border-radius: 3px;
+        border: 1px solid #D9D9D9;
+    }
+    
+    .pagination ul li a.active {
+        background-color: #D9D9D9;
+        color: black;
+    }    
+    .pagination a.disabled {
+        pointer-events: none;
+    }   
+    	
+	</style>
+</th:block>
+<th:block layout:fragment="content">
+<div class="content">
+	
+	 <form id="searchForm" th:action="@{/seller/room/list}" method="get">
+	
+		<div class= "searchBarWrapper">
+			<select id="searchType" name="searchType">
+			    <option value="buildingName" th:selected="${searchType == 'buildingName'}">건물명</option>
+			    <option value="address" th:selected="${searchType == 'address'}">주소</option>
+			</select>
+		    
+		    <input type="text" id="searchInput" name="searchKeyword" placeholder="검색어 입력" th:value="${searchKeyword}">
+		    <button type="submit" id="searchBtn">검색</button>
+	    </div>
+	    
+	    <div class= "checkBoxWrapper">
+			<input type="checkbox" name="type" value="원룸" onchange="submitForm()" th:checked="${types != null && types.contains('원룸')}"/> 원룸
+			<input type="checkbox" name="type" value="고시원" onchange="submitForm()" th:checked="${types != null && types.contains('고시원')}"/> 고시원
+			<input type="checkbox" name="type" value="오피스텔" onchange="submitForm()" th:checked="${types != null && types.contains('오피스텔')}"/> 오피스텔
+		</div> 	
+	 </form>
+
+
+   	 <div class="tableWrapper">
+   	 
+	     <table id="roomTable">
+	        <thead>
+	             <tr>
+			         <th>
+			            <input type="checkbox" id="checkAllRooms">
+			         </th>             
+	                 <th>타입</th>
+	                 <th>건물명</th>
+	                 <th>주소</th>
+	                 <th>월/전세</th>
+	                 <th>보증금</th>                 
+	                 <th>월세</th>
+	                 <th>등록일</th>
+	             </tr>
+	        </thead>
+			<tbody id="roomTableBody">
+			    <tr th:each="room : ${rooms}" th:onclick="'redirectToRoomDetails(\'' + ${room.roomId} + '\');'" style="cursor: pointer;">
+			        <td>			      	
+			            <input type="checkbox" class="roomCheckbox" th:data-room-id="${room.roomId}" th:value="${room.roomId}" onclick="event.stopPropagation();">
+			        </td>
+			        <td th:text="${room.type}"></td>   
+			        <td th:text="${room.buildingName}"></td>
+			        <td th:text="${room.address}"></td>
+			        <td th:text="${room.costType}"></td>
+			        <td th:text="${room.deposit}"></td>			      
+			        <td th:text="${room.monthCost}"></td>
+			        <td th:text="${#temporals.format(room.createDate, 'yyyy-MM-dd')}" id="roomCreateDate"></td>
+			    </tr>
+			</tbody>
+	         
+	     </table>
+     </div>
+	 <th:block th:if="${rooms.empty}">
+	        <p class="noResult">검색결과가 없습니다.</p>
+	 </th:block>	     
+     <form id="deleteForm" action="/seller/room/delete" method="post" style="display: none;">
+        <input type="hidden" id="roomIdsInput" name="roomIds" />
+     </form>
+     <div class ="deleteButtonWrapper" th:if="${!rooms.empty}">
+    	<button id="deleteSelectedRooms">삭제</button>
+   	 </div>     
+   	 
+	<div class="pagination" th:if="${!rooms.empty}">
+	    <ul>
+	        <li>
+	            <a th:href="@{/seller/room/list(page=0, searchType=${searchType}, searchKeyword=${searchKeyword}, type=${types})}" th:class="${rooms.number == 0 ? 'disabled' : ''}">&lt;</a>
+	        </li>
+	        <li th:each="pageNumber : ${#numbers.sequence(0, rooms.totalPages - 1)}">
+	            <a th:href="@{/seller/room/list(page=${pageNumber}, searchType=${searchType}, searchKeyword=${searchKeyword}, type=${types})}"
+	               th:text="${pageNumber + 1}"
+	               th:class="${rooms.number == pageNumber ? 'active' : ''}"></a>
+	        </li>
+	        <li>
+	            <a th:href="@{/seller/room/list(page=${rooms.totalPages - 1}, searchType=${searchType}, searchKeyword=${searchKeyword}, type=${types})}" th:class="${rooms.number == rooms.totalPages - 1 ? 'disabled' : ''}">&gt;</a>
+	        </li>
+	    </ul>
+	</div>
+
+   
+     
+</div>
+	
+</th:block>
+<th:block layout:fragment="customScript">
+	<script th:inline="javascript" type="text/javascript">
+    function submitForm() {
+        document.getElementById("searchForm").submit();
+    }
+    function redirectToRoomDetails(roomId) {
+    	  window.location.href = "/seller/room/detail/" + roomId;
+    	}    
+    
+    document.getElementById("checkAllRooms").addEventListener("change", function() {
+        const isChecked = this.checked;
+        document.querySelectorAll(".roomCheckbox").forEach(function(checkbox) {
+            checkbox.checked = isChecked;
+        });
+    });
+    
+
+
+    document.getElementById("deleteSelectedRooms").addEventListener("click", function() {
+        const checkboxes = document.querySelectorAll(".roomCheckbox:checked");
+        if (checkboxes.length === 0) {
+            alert("삭제할 항목을 선택하세요.");
+        } else {
+            if (confirm("삭제하시겠습니까?")) {
+                const roomIds = Array.from(checkboxes).map(function(checkbox) {
+                    return Number(checkbox.value);
+                });
+
+                fetch('/seller/room/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(roomIds),
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('삭제 되었습니다.');
+                        window.location.reload();
+                    } else {
+                        alert('삭제 실패');
+                    }
+                });
+            }
+        }
+    });
+
+    
+	</script>
+</th:block>

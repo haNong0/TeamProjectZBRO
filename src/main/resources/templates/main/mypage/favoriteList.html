@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/mypage_layout}">
+<th:block layout:fragment="customStyle">
+<style th:inline="css" type="text/css">   	
+	.favoriteTitle{
+        text-align: center;
+        font-size: 30px;
+        font-weight: 550;
+        margin: 70px 0 50px 0;	
+	}
+	
+	.compareButton {
+	    text-align: right;
+	    margin-right : 100px;
+	    margin-bottom: 20px;
+	} 
+	
+     .no-favorites {
+         text-align: center;
+         margin-top: 100px;
+         font-size: 20px;
+         color: #9C9A9A;
+     } 
+
+	.image-container {
+        display: flex;
+	    flex-wrap: wrap;
+	    justify-content: flex-start;
+	    padding: 0 150px;
+	    margin-left : 30px;	
+	    margin-bottom: 100px;	
+	    text-align: center;
+	        
+	}
+
+	.image-container > .comparison-item {
+	    flex: 0 0 calc(33.33% - 20px);
+	    padding: 0 10px; 
+	}	
+
+
+     .image-container img {
+         width: 230px;
+         height: 180px;
+         cursor: pointer;
+         margin-top: 30px;
+     }
+          
+	.image-wrapper {
+	    position: relative;
+	    display: inline-block;
+	}
+	
+	.image-wrapper i.bi-heart-fill {
+	    position: absolute;
+	    bottom: 0;
+	    right: 10px;
+	    font-size: 28px;
+	    color: #dc3545;
+	    cursor: pointer;
+	}  
+		          
+	.favoriteCost {
+		font-size: 20px;
+		font-weight: bold;
+	}
+	
+	.favorite-info {
+	    display: flex;
+	    justify-content: space-between;
+	    align-items: center;
+	}
+	
+	.favoriteTypeContainer {
+	    margin-left: auto;
+	    margin-right: 10px;
+	    margin-top :5px;
+	    font-size: 16px;
+	}
+
+	.favoriteAddressContainer{
+		display: flex;
+		justify-content: flex-end;
+	}
+	
+	.favoriteAddress{
+		margin-right: 10px;
+		font-size: 5px;
+		color: #979797;
+	}
+</style>
+
+</th:block>
+<th:block layout:fragment="content">
+	<div class=favoriteTitle>찜 목록</div>
+	<div class="favoriteWrap" >
+		<div class="compareButton">
+			<a th:href="@{/mypage/favorite/compare}" class="btn btn-danger">매물비교</a>
+		</div>
+		<div class="no-favorites" th:if="${favorites.size() == 0}">
+		    찜한 매물이 없습니다 !
+		</div>	
+			
+		<div class="image-container"> 		
+		    <div th:each="favorite, status : ${favorites}" class="comparison-item">
+				<div class="image-wrapper">
+				    <a th:href="@{'/room/detail/' + ${favorite.room.roomId}}">
+				        <img th:src="@{/room/photo(roomId=${favorite.room.roomId})}" class="room-image" />
+				    </a>
+				    <i class="bi bi-heart-fill" th:attr="data-favorite-id=${favorite.favoriteId}" onclick="deleteFavorite(event)"></i>
+				</div>
+				<div class="favorite-info">
+				    <span class="favoriteCost" th:text="${#strings.equals(favorite.room.costType, '월세') ? (favorite.room.deposit != 0 ? (favorite.room.costType + ' ' + favorite.room.deposit + '/' + favorite.room.monthCost) : (favorite.room.costType + ' ' + favorite.room.monthCost)) : (favorite.room.costType + ' ' + favorite.room.deposit)}"></span>
+				    <div class="favoriteTypeContainer">
+				        <span class="favoriteType" th:text="${favorite.room.type}"></span>
+				    </div>
+				</div>
+				<div class="favoriteAddressContainer">
+				    <span class="favoriteAddress" th:text="${#strings.substringAfter(favorite.room.address, '시 ')}"></span>
+				</div>
+		    </div>
+		</div>
+	</div>
+    
+	    	
+</th:block>
+
+
+<th:block layout:fragment="customScript">
+	<script th:inline="javascript" type="text/javascript">
+	
+	function deleteFavorite(event) {
+	    event.stopPropagation();
+
+	    const favoriteId = event.target.getAttribute('data-favorite-id');
+
+        if (confirm("선택한 매물을 찜 목록에서 삭제하시겠습니까?")) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('DELETE', '/favorites/' + favoriteId, true);
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const favoriteItem = event.target.closest('.comparison-item');
+                    favoriteItem.remove();
+                } 
+            };
+
+            xhr.send();
+        }
+    }	
+	</script>
+</th:block>
+
+    

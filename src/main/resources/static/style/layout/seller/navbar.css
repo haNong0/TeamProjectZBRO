@@ -1,0 +1,21 @@
+
+.navigation {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	padding: 18px 30px;
+	position: relative;
+	background-color: white;
+}
+
+.navigation a.nav-title {
+	text-decoration: none;
+	color: black;
+	font-weight: bold;
+}
+
+.navigation .login-wrapper > a{
+	text-decoration: none;
+	color: black;
+	font-weight: bold;
+}

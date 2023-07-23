@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="sidebar">
+
+	<aside>
+		<div class="aside-inner">
+			<div class="logo-wrapper aside-section">
+				<a href="/seller">
+					<img src="/images/seller_logo.png" alt="로고" class="logo">
+				</a>
+				<a href="/" class="go-home">홈페이지 바로가기</a>
+			</div>
+			<div class="profile-wrapper aside-section">
+				<div class="profile-image-wrapper">
+					<img th:src="@{/seller/profile/photo(sellerId=${session.sellerId})}" alt="Seller profile image" class="profile-image"/>
+				</div>
+				<p class="username" th:text="${session.sellerName}">홍길동 님</p>
+				<span class="admission-info" th:text="${session.sellerIsAdmission} ? '승인된 사용자입니다' : '승인되지 않은 사용자입니다.'">승인된 사용자입니다</span>
+			</div>
+			<div class="menu-wrapper aside-section">
+				<div class="menu">
+					<p class="outer-menu"><a href="/seller/user">회원정보</a></p>
+				</div>
+				<div class="menu">
+					<p class="outer-menu"><a href="/seller/room/list">매물</a></p>
+					<ul class="inner-menu-list">
+						<li><a href="/seller/room/insert">매물등록</a></li>
+						<li><a href="/seller/room/list">매물관리</a></li>
+						<li><a href="/seller/review/list">후기목록</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</aside>
+
+</th:block>
+</body>
+</html>

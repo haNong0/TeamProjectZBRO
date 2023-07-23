@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+
+<th:block th:fragment="sidebar">
+
+	<aside class="sidebar">
+		 
+		<div class="profile-wrapper">
+			<div class="consumer-image">
+	        	<img id="profileImageSide" th:src="@{/consumer/profile/photo(consumerId=${consumerUser.consumerId})}" alt="프로필">
+			</div>
+            <p class="consumer-name" th:text="${consumerUser.name+'님'}">회원A님</p>
+		</div>
+		 
+		<div class="menu-wrapper">
+			<div class="menu-wrapper aside-section">
+				<div class="menu">
+					<p class="outer-menu"><a href="/mypage/member/info">회원정보</a></p>
+				</div>
+				<div class="menu">
+					<p class="outer-menu">커뮤니티</a></p>
+					<ul class="inner-menu-list">
+						<li><a href="/mypage/content/list">작성한 글 보기</a></li>
+						<li><a href="/mypage/comment/list">작성한 댓글 보기</a></li>
+					</ul>
+				</div>
+				<div class="menu">
+					<p class="outer-menu">찜목록</a></p>
+					<ul class="inner-menu-list">
+						<li><a href="/mypage/favorite/list">찜 목록 보기</a></li>
+						<li><a href="/mypage/favorite/compare">매물 비교</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	     
+	</aside>
+
+</th:block>
+
+</html>

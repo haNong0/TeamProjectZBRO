@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 라이브러리를 사용하기 위해 추가 -->
+<meta charset="UTF-8" />
+
+
+
+<th:block layout:fragment="customStyle">
+<style th:inline="css" type="text/css">
+
+	.thisComment > div {
+		margin-right: 20px
+	}
+	.commentsList {
+		border: 1px solid gray;
+	}
+</style>
+</th:block>
+
+
+
+<th:block layout:fragment="content">
+	<span th:if="${type}=='꿀팁'" th:text="Tip"></span>
+	<span th:if="${type}=='질문'" th:text="Question"></span>
+	<h1 th:text="${type}"></h1>
+	<br />
+	<ul id="category">
+	    <li th:each="category : ${categories}" th:style="(${category.name()} == ${ct}) ? 'color: black' : 'color: gray'" >
+	        <a th:href="@{/post_list(categoryType=${category}, type=${type})}" th:text="${category}" ></a>
+	    </li>
+	</ul>
+	<br />
+	
+	<h2 th:text="${post.Title}"/>
+	<span th:text="${#temporals.format(post.createDate, 'yyyy-MM-dd')}"/>
+	<span th:text="${post.user.name}"/>
+	<span th:text="'조회수 ' + ${post.viewCount}"/>
+	
+	<hr />
+	<span th:text="${post.content}"/>
+	<hr />
+	
+	<a th:href="@{/post_list(type=${type}, categoryType=${ct})}" class="btn">목록</a>
+	<!-- 작성한 유저, 관리자만 볼 수 있는 버튼 -->
+	<a th:href="@{/post_revise(postId=${post.postId})}" class="btn">수정</a>
+	<a th:href="@{/post_delete(postId=${post.postId}, type=${type}, categoryType=${ct})}" class="btn">삭제</a>
+	<!--  -->
+	
+	<br /><br />
+	<h4 th:text="'댓글 '"/>
+	
+	<!-- 댓글 목록 출력 -->
+	<div id="commentList"></div>
+	
+	<!-- 댓글 작성 -->
+	<hr />
+	<div>
+		<!-- <div th:if="${뫄뫄 != null}"> -->
+			<textarea name="" class="content" cols="80" rows="5" placeholder="댓글을 작성하세요" required></textarea>
+			<button class="commentAdd">등록</button>
+		<!-- </div> -->
+	</div>
+</th:block>
+
+
+
+<th:block layout:fragment="customScript">
+	<script th:inline="javascript">
+	/*
+		[ data 보내는 방식 ]
+		
+		POST : data: JSON.stringify(객체명) : 객체를 JSON문자열로 변환해 데이터로 전달. 
+											  객체의 속성들이 JSON형식으로 직렬화되어 서버로 전송됨
+											  복잡한 데이터전송에 유용
+		GET : data : { key : value } 		: JavaScript객체 리터럴형태로 데이터 전달.
+											  ex) ?commentId=13과 같은 형태로 URL에 파라미터가 추가됨
+											  간단한 데이터/단일값 전달에 유용
+	*/
+		$(document).ready(function() {
+			
+			// 댓글작성 버튼클릭
+		 	$(".commentAdd").click(function() {
+	            var content = $(".content").val(); // 작성한 댓글
+	            var postId = [[${post.postId}]]; // 게시글 ID
+	            var userId = '2'
+	            
+	            if (content !== "") {
+	            	var commentDto = {
+	                    content: content,
+	                    postId: postId,
+	                    userId: userId
+	                };
+
+		            $.ajax({
+		                type: "POST",
+		                url: "/comment_add", // 댓글작성을 처리하는 컨트롤러 경로
+		                data: JSON.stringify(commentDto),
+		                contentType: "application/json",
+		                success: function(result) {	//댓글작성 성공
+		                	console.log('댓글작성 성공')
+				        	loadComments();
+		                	$(".content").val("");
+		                },
+		                error: function(error) {	//댓글작성 실패
+		                	console.log('댓글작성 실패')
+		                }
+		            });
+	            }
+	        });
+			
+			// 삭제 버튼클릭
+		 	$(document).on("click", ".commentDel", function() {
+		 		var result = confirm("댓글을 삭제하시겠습니까?");
+		 		var commentId = $(this).closest('.commentsList').find('.commentId').val();
+				
+		 		if(result) {
+			 	    $.ajax({
+			 	    	type: "GET",
+			 	    	url: "/comment_delete",
+			 	    	data: { commentId: commentId },
+			 	    	success : function(result) {
+			 	    		console.log('댓글삭제 성공 - '+ commentId);
+			 	    		loadComments();
+			 	    	},
+			 	    	error : function(error) {
+			 	    		console.log('댓글삭제 실패');
+			 	    	}
+			 	    })
+		 		}
+		 	});
+			
+		 	
+			// 수정 버튼클릭
+		 	var isEditReplyMode = false;	// 수정 폼이 열려있는지 여부를 저장하는 변수
+			$(document).on("click", ".commentEdit", function() {
+				if(isEditReplyMode) {
+					cancelReplyMode();
+					cancelEditMode();
+				}
+				
+				var commentContent = $(this).parent().siblings().find("span.commentContent").text();
+				var commentId = $(this).closest('.commentsList').find('.commentId').val();
+				var editForm = '<div class="editForm">'
+	                 + '<textarea class="content" name="content" cols="80" rows="5" required>' + commentContent + '</textarea>'
+	                 + '<button class="cancelEdit">취소</button>'
+	                 + '<button class="saveEdit">등록</button>'
+	                 + '</div>'; 
+                
+	            $(this).closest('.commentsList').append(editForm);
+                $(this).closest('.thisComment').hide();
+                isEditReplyMode = true;
+			})
+			
+			// 수정취소 버튼클릭
+			$(document).on("click", ".cancelEdit", function() {
+				cancelEditMode();
+			});
+		 	
+		 	// 수정등록 버튼클릭
+			$(document).on("click", ".saveEdit", function() {
+	            var content = $(".content").val();
+	            var commentId = $(this).closest('.commentsList').find('.commentId').val();
+	            var commentType = $(this).closest('.commentsList').find('.commentType').val();
+	            
+	            if (content !== "") {
+
+		            $.ajax({
+		                type: "GET",
+		                url: "/comment_revise", // 댓글작성을 처리하는 컨트롤러 경로
+		                data: { content:content, commentId:commentId, commentType:commentType},
+		                contentType: "application/json",
+		                success: function(result) {
+		                	console.log('댓글수정 성공')
+		                	loadComments();
+		                	cancelEditMode();
+		                },
+		                error: function(error) {
+		                	console.log('댓글수정 실패')
+		                }
+		            });
+	            }
+	        });
+		 	
+		 	// 답글 버튼클릭
+		 	/* var isEditReplyMode = false; */
+		 	$(document).on("click", ".commentReply", function() {
+		 		if(isEditReplyMode) {
+		 			cancelEditMode();
+		 			cancelReplyMode();
+		 		}
+		 		
+		 		var parentId = $(this).closest('.commentsList').find('.commentId').val();
+		 		var editForm =
+		 		'<div class="replyForm">'
+				+'<textarea name="" class="content" cols="80" rows="5" placeholder="답글을 작성하세요" required></textarea>'
+				+'<button class="cancelReply">취소</button>'
+				+'<button class="saveReply">등록</button> </div>'
+				
+				$(this).closest('.commentsList').append(editForm);
+				isEditReplyMode = true;
+		 	});
+		 	
+		 	// 답글취소 버튼클릭
+			$(document).on("click", ".cancelReply", function() {
+				cancelReplyMode();
+			});
+		 	
+		 	// 답글등록 버튼클릭
+		 	$(document).on("click", ".saveReply", function() {
+		 		var content = $(".content").val(); // 작성한 댓글
+	            var postId = [[${post.postId}]]; // 게시글 ID
+	            var userId = '2'
+	            var parentId = $(this).closest('.commentsList').find('.commentId').val();
+	            
+	            if (content !== "") {
+	            	var commentDto = {
+	                    content: content,
+	                    postId: postId,
+	                    userId: userId,
+	                    parentId: parentId
+	                };
+
+		            $.ajax({
+		                type: "POST",
+		                url: "/comment_add", // 댓글작성을 처리하는 컨트롤러 경로
+		                data: JSON.stringify(commentDto),
+		                contentType: "application/json",
+		                success: function(result) {	//댓글작성 성공
+		                	console.log('답글작성 성공')
+				        	loadComments();
+		                	$(this).closest(".content").remove();
+		                },
+		                error: function(error) {	//댓글작성 실패
+		                	console.log('답글작성 실패')
+		                }
+		            });
+	            }
+		 	})
+		 	
+	        loadComments();
+		});
+											  
+		
+		// 댓글수정 입력란 remove, 기존댓글 보여주기
+		function cancelEditMode() {
+			$(".editForm").remove();
+			$(".thisComment").show();
+			isEditReplyMode = false;
+		}
+		
+		// 답글 입력란 remove
+		function cancelReplyMode() {
+			$(".replyForm").remove();
+			isEditReplyMode = false;
+		}
+											  
+		// 댓글목록 가져오기
+		function loadComments() {
+			var postId = [[${post.postId}]];
+			
+			$.ajax({
+				type: "GET",
+				url: "get_comments", //댓글목록 가져오는 컨트롤러 경로
+				data: { postId: postId },
+				success: function(result) {	//댓글목록 가져오기 성공
+					console.log('댓글목록 가져오기 성공')
+	                // 받은 데이터를 반복문으로 돌면서 각 댓글을 HTML로 생성하여 목록에 추가 처리
+	                var commentList = $("#commentList");
+	                commentList.empty(); // 이전 댓글 목록 초기화
+	                
+	                function padZero(num) {
+	                    return num < 10 ? '0' + num : num;
+	                }
+	
+	                for (var i = 0; i < result.length; i++) {
+	                    var comment = result[i];
+	                    var content = comment.content;
+	                    var userId = comment.userId;
+	                    var userName = comment.userName;
+	                    var createDate = new Date(comment.createDate);
+	                    var formattedDate = createDate.getFullYear() + '-' + padZero(createDate.getMonth() + 1) + '-' + padZero(createDate.getDate());
+	                    var profilePhoto = comment.profilePhoto;
+	                    var commentId = comment.commentId;
+	                    var parentId = comment.parentId
+	                    var commentType = comment.commentType;
+	                    if(parentId === 0) parentId = '';
+	                    
+	                    // 댓글 HTML 생성 및 목록에 추가
+       					var commentHtml = '<div class="commentsList" style="margin-left: calc(60px * ' + commentType + ')"> <input type="hidden" class="commentId" value="' + commentId + '" /> <input type="hidden" class="parentId" value="' + parentId + '" /> <input type="hidden" class="commentType" value="' + commentType + '" /> <div class="thisComment" style="display: flex;"> <div>profilePhoto</div> <div> <div>' + userName + '</div>'
+                        + '<span class="commentContent">' + content + '</span> <div style="display: flex"> <span style="margin-right:10px">' + formattedDate + '</span>'
+                        + '<div class="commentReply btn">답글</div> </div> </div> <div> <span class="commentEdit btn">수정</span> <span> ｜ </span> <span class="commentDel btn">삭제</span> </div> </div> </div>';
+
+	                    commentList.append(commentHtml);
+	                }
+	            },
+	            error: function(error) {
+					console.log('댓글목록 가져오기 실패')
+	            }
+			})
+		} // 댓글목록 가져오기
+	</script>
+</th:block>
+</html>

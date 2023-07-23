@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<th:block layout:fragment="customStyle">
+<style th:inline="css" type="text/css">
+	
+	.login-select-main {
+		margin: 140px 20px 0;
+		margin-bottom: 60px;
+	}
+	
+	.login-select-wrapper {
+		text-align: center;
+	}
+	
+	.login-select-wrapper h1.title {
+		margin-bottom: 7.5vh;
+	}
+	
+	.join-form-wrapper{
+		padding: 0 350px;
+	}
+	
+	.tel-input-wrapper {
+		display: flex;
+	    flex-direction: row;
+	    flex-wrap: nowrap;
+	    justify-content: space-between;
+	    align-items: center;
+	}
+	
+	input.tel-input {
+		width: 190px;
+	}
+	
+	.isbiz-input-wrapper {
+		display: flex!important;
+	    flex-direction: row;
+	    flex-wrap: nowrap;
+	    align-items: center;
+	    gap: 12vh;
+	}
+	
+	.email-check-message {
+		text-align: left;
+		margin: 0;
+		display: none;
+	}
+	
+	p.email-able-message {
+		color: darkgreen;
+	}
+	
+	p.email-exist-message {
+		color: red;
+	}
+	
+</style>
+
+</th:block>
+<th:block layout:fragment="content">
+	
+	<div class="login-select-main">
+		<div class="login-select-wrapper">
+			<h1 class="title">판매자 회원가입</h1>
+			
+			<div class="join-form-wrapper">
+				<form action="/join/seller" method="post" id="join-form" enctype="multipart/form-data">
+					<div class="email-input-wrapper mb-1">
+						<div class="d-flex" style="gap: 10px; flex-direction: row; flex-wrap: nowrap;">
+							<input type="hidden" id="email-check" value="false"/>
+							<input type="email" name="email" class="form-control form-control-lg" style="width:75%" placeholder="*이메일" required/>
+							<button type="button" class="btn btn-lg btn-success" style="width:25%" id="user-exists-check-button">중복 확인</button>
+						</div>
+						<p class="email-check-message email-able-message">사용가능한 이메일입니다.</p>
+						<p class="email-check-message email-exist-message">이미 사용중인 이메일 입니다.</p>
+					</div>
+					<input type="password" name="password" class="form-control form-control-lg mb-1" placeholder="*비밀번호" required/>
+					<input type="password" id="password-check" class="form-control form-control-lg mb-1" placeholder="*비밀번호 확인" required/>
+					<input type="text" name="name" class="form-control form-control-lg mb-3" placeholder="*이름" required/>
+					
+					<div class="tel-input-wrapper mb-4">
+						<input type="text" name="tel1" class="form-control form-control-lg tel-input" placeholder="*연락처" required>
+						<span>-</span>
+						<input type="text" name="tel2" class="form-control form-control-lg tel-input" required>
+						<span>-</span>
+						<input type="text" name="tel3" class="form-control form-control-lg tel-input" required>
+					</div>
+					
+					<div class="mb-2">
+						<div class="form-control form-control-lg isbiz-input-wrapper mb-1">
+							<span class="">사업자</span>
+							<div>
+								<input type="radio" name="isBiz" id="isBizTrue" class="form-check-input" value="true"/>
+								<label for="isBizTrue" class="form-check-label" style="margin-left: -5px;">예</label>
+							</div>
+							<div>
+								<input type="radio" name="isBiz" id="isBizFalse" class="form-check-input" value="false" checked/>
+								<label for="isBizFalse" class="form-check-label" style="margin-left: -5px;">아니요</label>
+							</div>
+						</div>
+						<div class="biz-input-wrapper mb-4 form-control" style="display: none;">
+							<input type="text" name="brokerName" class="form-control form-control-lg mb-1" placeholder="*부동산명"/>
+							<label for="biz-scan-file" class="form-label" style="display: block; text-align: start; margin:0;">*사업자 등록증</label>
+							<input type="file" name="bizScanFile" id="biz-scan-file" class="form-control form-control-lg mb-1" required/>
+						</div>
+					</div>
+					<label for="profile-photo" class="form-label" style="display: block; text-align: start; margin:0;">프로필사진</label>
+					<input type="file" name="profilePhotoFile" id="profile-photo" class="form-control form-control-lg mb-4"/>
+					
+					<button type="submit" class="btn btn-primary btn-lg mb-1"> 회원가입 </button>
+					<p>판매자 승인 후 이용 가능합니다.</p>
+				</form>
+			</div>
+			
+		</div>
+	</div>
+	
+</th:block>
+<th:block layout:fragment="customScript">
+	<script th:inline="javascript" type="text/javascript">
+		$(document).ready(() => {
+			
+			/*초기값 설정*/
+			 if($("input[name='isBiz']:checked").val() == "true"){
+				$("div.biz-input-wrapper").show();
+				$("input[name='brokerName']").attr("required", true);
+				$("input[name='bizScanFile']").attr("required", true);
+			 } else if($("input[name='isBiz']:checked").val() == "false") {
+				$("div.biz-input-wrapper").hide();
+				$("input[name='brokerName']").val(null);
+				$("input[name='bizScanFile']").val(null);
+				$("input[name='brokerName']").attr("required", false);
+				$("input[name='bizScanFile']").attr("required", false);
+			 }
+
+
+			/*사업자 여부에 따라 부동산명 표시 여부*/
+			$("input[name='isBiz']").change(function(e){
+				if(e.target.value == 'true') {
+					$("div.biz-input-wrapper").show();
+					$("input[name='brokerName']").attr("required", true);
+					$("input[name='bizScanFile']").attr("required", true);
+				} else if(e.target.value == 'false') {
+					$("div.biz-input-wrapper").hide();
+					$("input[name='brokerName']").val(null);
+					$("input[name='bizScanFile']").val(null);
+					$("input[name='brokerName']").attr("required", false);
+					$("input[name='bizScanFile']").attr("required", false);
+				}
+			});
+			
+			/**/
+			$("#join-form").submit( function(e) {
+				
+				if(document.getElementById("email-check").value == "false") {
+					e.preventDefault();
+					alert("이메일 중복확인 해주세요.");
+					$("input[name='email']").focus();
+					return;
+				}
+				
+				if( $("input[name='password']").val() != $("#password-check").val() ) {
+					e.preventDefault();
+					alert("비밀번호가 맞지 않습니다.");
+					$("#password-check").focus();
+					return;
+				}
+				
+				let tel1 = $("input[name='tel1']");
+				if( (tel1.val().length >= 2 && tel1.val().length <= 4) === false ){
+					e.preventDefault();
+					alert("연락처의 첫번째는 2에서 4자리까지만 입력할 수 있습니다.");
+					te1.focus();
+					return;
+				}
+				
+				let tel2 = $("input[name='tel2']");
+				if(tel2.val().length !== 4 ) {
+					e.preventDefault();
+					alert("연락처의 중간은 4자리가 입력되어야합니다.");
+					tel2.focus();
+					return;
+				}
+				
+				let tel3 = $("input[name='tel3']");
+				if(tel3.val().length !== 4 ) {
+					e.preventDefault();
+					alert("연락처의 끝은 4자리가 입력되어야합니다.");
+					tel3.focus();
+					return;
+				}
+				
+			});
+			
+			$("input[name='email']").change(function() {
+				$(".email-check-message").hide();
+			});
+			
+			$("#user-exists-check-button").click(function() {
+				const emailElement = $("input[name='email']");
+				let email = emailElement.val();
+				if(email == "") {
+					alert("이메일을 입력해주세요.");
+					emailElement.focus();
+					document.getElementById("email-check").value = "false";
+				} else {
+					$.ajax({
+						method: "POST",
+						url: "/join/seller/check/exists",
+						data: {"email":email},
+						success: function(res) {
+							console.log(res);
+							$(".email-check-message").hide();
+							if(res == false) {
+								document.getElementById("email-check").value = "true";
+								$(".email-able-message").show();
+							} else if(res == true) {
+								document.getElementById("email-check").value = "false";
+								$(".email-exist-message").show();
+								emailElement.focus();
+							} else {
+								console.log("알수없는 메시지 : ", res);
+							}
+						}
+					});
+				}
+			});
+			
+		});
+	</script>
+</th:block>
+    
+    

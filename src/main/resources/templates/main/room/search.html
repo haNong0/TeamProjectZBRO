@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/search_layout}">
+<th:block layout:fragment="customStyle">
+	<link href="/style/main/room/room_search.css" rel="stylesheet" type="text/css" />
+	<style th:inline="css" type="text/css">
+	</style>
+</th:block>
+<th:block layout:fragment="content">
+	
+	<div class="search-main-wrapper">
+		<div class="search-wrapper">
+			<form action="#" class="search-form" style="display: flex;">
+				<div style="width:auto; position:relative;">
+					<button type="button" class="search-word-reset-button" onclick="searchWordReset()"><i class="bi bi-x"></i></button>
+					<input type="text" name="searchWord" class="form-control me-1" style="width: 200px;" th:value="${roomSearchDTO.searchWord}"/>
+				</div>
+				<button type="submit" class="btn btn-outline-primary me-5">검색</button>
+				<select name="type" class="form-select me-1" style="width: 120px;">
+					<option value="none" th:selected="${roomSearchDTO.type.toString()} == 'none'">-유형-</option>
+					<option value="원룸" th:selected="${roomSearchDTO.type.toString()} == '원룸'">원룸</option>
+					<option value="오피스텔" th:selected="${roomSearchDTO.type.toString()} == '오피스텔'">오피스텔</option>
+					<option value="고시원" th:selected="${roomSearchDTO.type.toString()} == '고시원'">고시원</option>
+				</select>
+				
+				<select name="costType" class="form-select" style="width: 120px; ">
+					<option value="none" th:selected="${roomSearchDTO.costType.toString() == 'none'}">-전/월세-</option>
+					<option value="월세" th:selected="${roomSearchDTO.costType.toString() == '월세'}">월세</option>
+					<option value="전세" th:selected="${roomSearchDTO.costType.toString() == '전세'}">전세</option>
+				</select>
+			</form>
+		</div>
+		
+		<div class="search-result-wrapper">
+			<div class="room-list">
+			
+				<div class="room-item" th:classappend="'room-'+${room.roomId}" th:each="room : ${rooms}">
+					<div class="room-item-wrapper">
+						<input type="hidden" class="address" th:value="${room.address}" th:data="${room.roomId}"/>
+					    <div class="room-photo-wrapper" style="width:138px;">
+				    		<div class="favorite-button" th:classappend="'favorite-room-'+${room.roomId}">
+				    			<button type="button" onclick="doFavorite(this)" th:if="${room.isFavorite == false}" th:data-room="${room.roomId}">
+				    				<i class="bi bi-heart"></i>
+				    			</button>
+				    			<button type="button" onclick="doUnfavorite(this)" th:if="${room.isFavorite == true}" th:data-favorite="${room.favoriteId}" th:data-room="${room.roomId}">
+				    				<i class="bi bi-heart-fill"></i>
+				    			</button>
+			    			</div>
+					    	<div class="image-wrapper"></div>
+					        <img th:src="@{/room/photo(roomId=${room.roomId})}" th:alt="${room.address}" class="room-image" />
+					    </div>
+					    
+					    <div class="room-info-wrapper" th:onclick="|location.href='@{/room/detail(roomId=${room.roomId})}'|">
+				            <p class="room-cost">
+				                <span th:text="${room.costType}">월세</span>
+				                <th:block th:if="${room.costType.toString() == '월세'}">
+				                	<th:block th:if="${room.deposit != 0}" >
+						                <span th:text="${room.deposit}">1000</span>
+						                <span>/</span>
+				                	</th:block>
+					                <span th:text="${room.monthCost}">30</span>
+				                </th:block>
+				                <th:block th:if="${room.costType.toString() == '전세'}">
+				                	<span th:text="${room.deposit}">1000</span>
+				                </th:block>
+				            </p>
+					        <p class="room-item-type" th:text="${room.type}">원룸</p>
+					        <p class="room-item-intro" th:text="${room.intro}"></p>
+					    </div>
+					</div>
+				</div>
+				
+			</div>
+			<div class="map-wrapper">
+				<div id="map" style="width:100%; height:100%;"></div>
+			</div>
+		</div>
+	</div>
+	
+</th:block>
+<th:block layout:fragment="customScript">
+	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8797ef24169da67f855167ed9d5ded62&libraries=services"></script>
+	<script type="text/javascript" src="/script/main/room/room_search.js"></script>
+	<script th:inline="javascript" type="text/javascript">
+		function doUnfavorite(e){
+			let favId = e.attributes["data-favorite"].value;
+			
+			$.ajax({
+				type: "post",
+				url: '/room/unfavorite',
+				data: {"favoriteId":favId},
+				success: function(res) {
+					if(res == "success") {
+						console.log("unfavorite(favId="+favId+") : "+res);
+						favoriteToggle(e, false);
+					} else {
+						console.error("unfavorite failed... (favId="+favId+")");
+					}
+				},
+				error: function(error) {
+					console.log(error);
+				}
+			});
+		
+		}
+		
+		function doFavorite(e){
+			let roomId = e.attributes["data-room"].value;
+			
+			$.ajax({
+				type: "post",
+				url: '/room/favorite',
+				data: {"roomId":roomId},
+				success:function(res) {
+					if(res != null && res != "") {
+						console.log("favorited success! (favId="+res+")");
+						favoriteToggle(e, true, res);
+					} else {
+						console.error("favorited failed... (room"+roomId+")");						
+					}
+				},
+				error: function(error) {
+					console.error(error);
+				}
+			});
+			
+		}
+		
+		
+		const heartElement = "<i class='bi bi-heart'></i>";
+		const heartFillElement = "<i class='bi bi-heart-fill'></i>";
+		function favoriteToggle(e, faved, favId) {
+			if(faved == true) {
+				e.setAttribute("data-favorite", favId);
+				e.setAttribute("onclick", "doUnfavorite(this);");
+				e.innerHTML = heartFillElement;
+			} else if(faved == false) {
+				e.removeAttribute("data-favorite");
+				e.setAttribute("onclick", "doFavorite(this);");
+				e.innerHTML = heartElement;
+			}
+		}
+		
+	</script>
+</th:block>

@@ -1,0 +1,47 @@
+.nav-link.btn.btn-link {
+    border: 1px solid ;
+    border-radius: 12px;
+   	border-color:#acda93;
+   	padding: 13px;
+   	font-weight: bolder;
+   	font-size: 20px;
+    color : #acda93;
+}
+
+/*드롭다운 버튼 활성화 시...*/
+.nav-link.show {
+	color : #759d60 !important;
+}
+  
+  
+.nav-item1 .nav-link {
+	font-weight: bolder;
+	font-size: 20px;
+	color: #acda93;
+	margin: 15px
+}
+
+.navigation {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  position: relative;
+}
+
+.navigation::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 1.5%;
+  width: 97%;
+  height: 3px;
+  background-image: linear-gradient(to right, #86c69f, #acda93);
+}
+
+.dropdown-menu .dropdown-item {
+  padding: 10px;
+  color : #86c69f;
+}
+
+.navbar-brand img {
+	height:100%;
+}

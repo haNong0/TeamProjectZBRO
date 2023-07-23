@@ -1,0 +1,29 @@
+html, body {
+	height: 100%;
+}
+
+body {
+	background-color: rgb(240, 240, 240);
+}
+
+.main-wrapper {
+	display: flex;
+	flex-wrap: nowrap;
+	padding-bottom: 172px;
+	min-height: 100%;
+    height: auto;
+}
+
+.main-content-wrapper {
+	width: 100%;
+	min-width: 1000px;
+	padding: 0;
+}
+
+
+/*########## 공통 ##########*/
+.content {
+	margin: 30px 50px;
+	padding: 20px;
+	background-color: white;
+}

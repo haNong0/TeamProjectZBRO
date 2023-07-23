@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/mypage_layout}">
+<th:block layout:fragment="customStyle">
+<style th:inline="css" type="text/css">
+		
+    .communityWrapTitle {
+        text-align: center;
+        font-size: 30px;
+        font-weight: 550;
+        margin: 100px 0;
+    }
+    .commumityWrap{
+    	padding: 0 100px;
+    	
+    }
+
+
+	ul.nav {
+		border-top: 2px solid black; 
+		border-bottom: 1px solid black; 
+	  	list-style-type: none;
+	  	
+	}
+	
+	ul.nav li {
+	  	display: inline-block;	  	
+	}
+	
+	ul.nav li a {
+	  	display: block;
+	  	padding: 10px 20px;
+	  	text-decoration: none;
+	  	color: black;
+	}
+	
+	ul.nav li span {
+	  	display: block;
+	  	padding: 10px 20px;
+	  	
+	}
+
+	table#communityTable {
+	   	width: 100%;
+
+	}
+	table#communityTable tr {
+        border-bottom: 1px dotted #E3E3E3;
+    }
+	
+	table#communityTable td {
+	    padding: 10px;
+		
+	}	
+	
+	table#communityTable td a {
+		text-decoration: none;
+		color: black;	    		
+	}	
+	
+	ul.nav li a.selected {
+    	font-weight: bold;
+    }
+    
+	ul.nav li a:not(.selected) {
+    	color: #B2B2B2;
+	}
+	
+    .pagination {
+        margin: 50px 0;
+        justify-content: center;
+    }
+    
+    .pagination ul {
+        list-style: none;
+        padding: 0;
+        display: inline-block;
+    }
+    
+    .pagination ul li {
+        display: inline-block;
+    }
+    
+    .pagination ul li a {
+        display: inline-block;
+        padding: 2px 10px;
+        margin-right: 5px;
+        text-decoration: none;
+        background-color: white;
+        color: black;
+        border-radius: 3px;
+        border: 1px solid #D9D9D9;
+    }
+    
+    .pagination ul li a.active {
+        background-color: #D9D9D9;
+        color: black;
+    }    
+    .pagination a.disabled {
+        pointer-events: none;
+    } 
+</style>
+
+</th:block>
+
+<th:block layout:fragment="content">
+        <div class=communityWrapTitle>작성한 글 보기</div>        
+        <div class=commumityWrap>
+			<ul class="nav">
+		    <li class="nav-item">
+		        <a class="nav-link" th:class="${type == '꿀팁' ? 'selected' : ''}" href="?type=꿀팁">꿀팁</a>
+		    </li>
+		    <li class="nav-item">
+		        <a class="nav-link" th:class="${type == '질문' ? 'selected' : ''}" href="?type=질문">질문</a>
+		    </li>
+			<li class="nav-item" style="margin-left: auto; ">
+			   <span class="date">작성일</span>
+			</li>
+			</ul>
+        
+	        <table id="communityTable">
+	            <tbody>
+	                <th:block th:if="${type == '꿀팁'}" >
+	                    <tr th:each="community : ${tips}" th:attr="data-type=${community.type}">
+	                        <td>
+	                            <a th:href="@{/community/{id}(id=${community.postId})}">
+	                                <span th:text="${community.title}"></span>
+	                            </a>
+	                        </td>
+	                        <td th:text="${#temporals.format(community.createDate, 'yyyy-MM-dd')}" style="text-align: right; font-size: 15px; color: #B2B2B2;" ></td>
+	                    </tr>
+	                </th:block>
+	                <th:block th:if="${type == '질문'}">
+	                    <tr th:each="community : ${questions}" th:attr="data-type=${community.type}">
+	                        <td>
+	                            <a th:href="@{/community/{id}(id=${community.postId})}">
+	                                <span th:text="${community.title}"></span>
+	                            </a>
+	                        </td>
+	                        <td th:text="${#temporals.format(community.createDate, 'yyyy-MM-dd')}" style="text-align: right; font-size: 15px; color: #B2B2B2;"></td>
+	                    </tr>
+	                </th:block>
+	            </tbody>
+	        </table>
+        </div>
+
+        
+		<div class="pagination" th:if="${type == '꿀팁'} and ${tipsPage.totalElements > 0}">
+		    <ul>
+		        <li>
+		            <a th:href="@{${'/contentList'} + '?type=' + ${type} + '&amp;page=' + ${tipsPage.number - 1}}"
+		               th:class="${tipsPage.first ? 'disabled' : ''}">&lt;</a>
+		        </li>
+		        <li th:each="pageNumber : ${#numbers.sequence(0, tipsPage.totalPages - 1)}">
+		            <a th:href="@{${'/contentList'} + '?type=' + ${type} + '&amp;page=' + ${pageNumber}}"
+		               th:text="${pageNumber + 1}"
+		               th:class="${pageNumber == tipsPage.number ? 'active' : ''}"></a>
+		        </li>
+		        <li>
+		            <a th:href="@{${'/contentList'} + '?type=' + ${type} + '&amp;page=' + ${tipsPage.number + 1}}"
+		               th:class="${tipsPage.last ? 'disabled' : ''}">&gt;</a>
+		        </li>
+		    </ul>
+		</div>
+		
+		<div class="pagination" th:if="${type == '질문'} and ${questionsPage.totalElements > 0}" >
+		    <ul>
+		        <li>
+		            <a th:href="@{${'/mypage/content/list'} + '?type=' + ${type} + '&amp;page=' + ${questionsPage.number - 1}}"
+		               th:class="${questionsPage.first ? 'disabled' : ''}">&lt;</a>
+		        </li>
+		        <li th:each="pageNumber : ${#numbers.sequence(0, questionsPage.totalPages - 1)}">
+		            <a th:href="@{${'/mypage/content/list'} + '?type=' + ${type} + '&amp;page=' + ${pageNumber}}"
+		               th:text="${pageNumber + 1}"
+		               th:class="${pageNumber == questionsPage.number ? 'active' : ''}"></a>
+		        </li>
+		        <li>
+		            <a th:href="@{${'/mypage/content/list'} + '?type=' + ${type} + '&amp;page=' + ${questionsPage.number + 1}}"
+		               th:class="${questionsPage.last ? 'disabled' : ''}">&gt;</a>
+		        </li>
+		    </ul>
+		</div>
+
+</th:block>
+<th:block layout:fragment="customScript">
+<script th:inline="javascript" type="text/javascript">
+
+</script>
+</th:block>
+
+
+    

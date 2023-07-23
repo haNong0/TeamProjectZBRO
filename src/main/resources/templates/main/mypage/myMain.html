@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/mypage_layout}">
+<th:block layout:fragment="customStyle">
+<style th:inline="css" type="text/css">
+			.favorite-list{
+				margin-top:70px;
+				margin-bottom:100px;
+				justify-content: center;
+			}
+
+			.list-button{
+				margin-left: 630px;
+				padding-top: 20px
+				
+			}
+
+			.favoriteBigTitle{
+				display: flex;
+				justify-content: center;
+				margin-bottom: 10px;
+			}
+			
+			.favoriteBigTitle a{
+			    text-decoration: none;
+			    color: #ADADAD;
+			}			
+			.favoriteCost {
+				font-size: 20px;
+				font-weight: bold;
+			}
+			
+			.favorite-info {
+			    display: flex;
+			    justify-content: space-between;
+			    align-items: center;
+			}
+			
+			.favoriteTypeContainer {
+			    margin-left: auto;
+			    margin-right: 10px;
+			    margin-top :5px;
+			    font-size: 16px;
+			}
+
+			.favoriteAddressContainer{
+				display: flex;
+				justify-content: flex-end;
+			}
+			
+			.favoriteAddress{
+				margin-right: 10px;
+				font-size: 5px;
+				color: #979797;
+			}
+						  	  
+			.image-container {
+			    display: flex;
+			    justify-content: center;
+			}
+
+            .image-container img {
+                width: 230px;
+                height: 160px;
+                cursor: pointer;
+                margin-right : 10px;
+            }
+            
+			.image-wrapper {
+			    position: relative;
+			    display: inline-block;
+			}
+			
+			.image-wrapper i.bi-heart-fill {
+			    position: absolute;
+			    bottom: 0;
+			    right: 20px;
+			    font-size: 28px;
+			    color: #dc3545;
+			}  
+			
+			
+			
+
+/* --------------------------------------------------------------------------- */
+
+
+			.commTitle{
+				margin-left: 170px;
+				margin-bottom: 20px;
+			}			
+			.comment-community-table {
+			    display: flex;
+			    justify-content: center;
+			    margin-bottom: 100px;
+			}	
+			
+			.comment-community-table td a {
+			    display: block;
+			    white-space: nowrap;
+			    overflow: hidden;
+			    text-overflow: ellipsis;
+			    max-width: 330px;
+			    text-decoration: none;
+			    color: black;
+			}	
+						
+			
+			.communityBigTitle a{
+			    text-decoration: none;
+			    color: #ADADAD;
+			    margin-top: 5px;
+			}		
+			
+		    .communityTable {
+		        margin-right: 40px;
+		        width: 330px;
+		    }
+		
+
+		    .commentTable {
+		        margin-left: 40px;
+		        width: 330px;
+		        
+		    }
+			.commentTitle {
+			    font-size: 20px;
+			    font-weight: 600;
+			}
+			.communityTitle {
+			    font-size: 20px;
+			    font-weight: 600;
+			}
+			.communityBigTitle {
+			    display: flex;
+			    justify-content: space-between;
+			    align-items: center;
+			    margin-bottom: 10px;
+			    padding-bottom : 5px;
+			    border-bottom: 1px solid #8B8B8B;
+			    
+			}
+			
+			.moreContent {
+			    margin-left: auto;
+			}    		          
+
+			.commentBigTitle {
+			    display: flex;
+			    justify-content: space-between;
+			    align-items: center;
+			    margin-bottom: 10px;
+			    padding-bottom : 5px;
+			    border-bottom: 1px solid #8B8B8B;
+			}
+			.commentBigTitle a{
+			    text-decoration: none;
+			    color: #ADADAD;
+			    margin-top: 5px;
+			}	
+			.moreComment{
+				margin-left: auto;
+			}
+			
+			.comment-community-table .communityTable td {
+			    border-bottom-width: 1px;
+			    border-bottom-style: dotted;
+			    border-bottom-color: #E3E3E3;
+			    width: 330px;
+			    padding: 2px;			    
+			    
+			}
+			.comment-community-table .commentTable td {
+			    border-bottom-width: 1px;
+			    border-bottom-style: dotted;
+			    border-bottom-color: #E3E3E3;
+			    width: 330px;
+			    padding: 2px;			    
+			    
+			}			
+</style>
+
+</th:block>
+<th:block layout:fragment="content">
+
+
+	<div class="favorite-list">
+		<div class="favoriteBigTitle">
+            <h3 class="list-title"> 찜목록 </h3>		
+            <a th:href="@{/favoriteList}" class="list-button">더보기</a>
+        </div>
+		<div class="image-container">
+		    <div th:each="favorite, status : ${favorites}" class="comparison-item" th:if="${status.index < 3}">
+				<div class="image-wrapper">
+				    <a th:href="@{'/room/detail/' + ${favorite.room.roomId}}">
+				        <img th:src="@{/room/photo(roomId=${favorite.room.roomId})}" class="room-image" />
+				    </a>
+				    <i class="bi bi-heart-fill" th:attr="data-favorite-id=${favorite.favoriteId}" onclick="deleteFavorite(event)"></i>
+				</div>
+				<div class="favorite-info">
+				    <span class="favoriteCost" th:text="${#strings.equals(favorite.room.costType, '월세') ? (favorite.room.deposit != 0 ? (favorite.room.costType + ' ' + favorite.room.deposit + '/' + favorite.room.monthCost) : (favorite.room.costType + ' ' + favorite.room.monthCost)) : (favorite.room.costType + ' ' + favorite.room.deposit)}"></span>
+				    <div class="favoriteTypeContainer">
+				        <span class="favoriteType" th:text="${favorite.room.type}"></span>
+				    </div>
+				</div>
+				<div class="favoriteAddressContainer">
+				    <span class="favoriteAddress" th:text="${#strings.substringAfter(favorite.room.address, '시 ')}"></span>
+				</div>	        
+		    </div>
+		</div>
+	</div>
+
+
+
+
+<h3 class="commTitle">커뮤니티</h3>
+
+<div class="comment-community-table">		
+	<div class="communityTable">
+		<div class="communityBigTitle">
+			<span class="communityTitle">작성한 게시글</span>
+			<a th:href="@{/content/list}" class="moreContent">더보기</a>
+		</div>
+	
+		<table>
+			<tr th:each="community : ${top10Contents}">
+				<td>
+					<a th:href="@{/community/{id}(id=${community.postId})}">
+						<span th:text="${community.title}"></span>
+					</a>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="commentTable">
+		<div class="commentBigTitle">
+	        <span class="commentTitle">작성한 댓글</span>
+	        <a th:href="@{/comment/list}" class="moreComment">더보기</a>
+		</div>
+		        
+		<table>
+	        <tr th:each="comment : ${comments}">
+	            <td>
+	                <a th:href="@{/community/{id}(id=${comment.post.postId})}">
+	                    <span th:text="${comment.content}"></span>
+	                </a>
+	            </td>
+	        </tr>
+		</table>
+	</div>        
+       
+</div>	        
+</th:block>
+	
+	
+</th:block>
+<th:block layout:fragment="customScript">
+	<script th:inline="javascript" type="text/javascript">
+	function deleteFavorite(event) {
+	    event.stopPropagation();
+
+	    const favoriteId = event.target.getAttribute('data-favorite-id');
+
+        if (confirm("선택한 매물을 찜 목록에서 삭제하시겠습니까?")) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('DELETE', '/favorites/' + favoriteId, true);
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const favoriteItem = event.target.closest('.comparison-item');
+                    favoriteItem.remove();
+                } 
+            };
+
+            xhr.send();
+        }
+    }	
+	
+	</script>
+</th:block>
+
+    

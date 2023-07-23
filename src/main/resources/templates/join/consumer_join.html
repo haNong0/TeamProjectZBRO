@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<th:block layout:fragment="customStyle">
+<style th:inline="css" type="text/css">
+	
+	.login-select-main {
+		margin: 140px 20px 100px;
+	}
+	
+	.login-select-wrapper {
+		text-align: center;
+	}
+	
+	.login-select-wrapper h1.title {
+		margin-bottom: 7.5vh;
+	}
+	
+	.join-form-wrapper {
+		padding: 0 350px;
+	}
+	
+	.email-check-message {
+		text-align: left;
+		margin: 0;
+		display: none;
+	}
+	
+	p.email-able-message {
+		color: darkgreen;
+	}
+	
+	p.email-exist-message {
+		color: red;
+	}
+	
+</style>
+
+</th:block>
+<th:block layout:fragment="content">
+	
+	<div class="login-select-main">
+		<div class="login-select-wrapper">
+			<h1 class="title">구매자 회원가입</h1>
+			
+			<div class="join-form-wrapper">
+				<form action="/join/consumer" method="post" id="join-form" enctype="multipart/form-data">
+					<div class="email-input-wrapper mb-1">
+						<div class="d-flex" style="gap: 10px; flex-direction: row; flex-wrap: nowrap;">
+							<input type="hidden" id="email-check" value="false"/>
+							<input type="email" name="email" class="form-control form-control-lg" style="width:75%" placeholder="*이메일" required/>
+							<button type="button" class="btn btn-lg btn-success" style="width:25%" id="user-exists-check-button">중복 확인</button>
+						</div>
+						<p class="email-check-message email-able-message">사용가능한 이메일입니다.</p>
+						<p class="email-check-message email-exist-message">이미 사용중인 이메일 입니다.</p>
+					</div>
+					<input type="password" name="password" class="form-control form-control-lg mb-1" placeholder="*비밀번호" required/>
+					<input type="password" id="password-check" class="form-control form-control-lg mb-1" placeholder="*비밀번호 확인" required/>
+					<input type="text" name="name" class="form-control form-control-lg mb-3" placeholder="*이름" required/>
+					<label for="profile-photo" class="form-label" style="display: block; text-align: start;">프로필사진</label>
+					<input type="file" name="profilePhotoFile" id="profile-photo" class="form-control form-control-lg mb-4"/>
+					<button type="submit" class="btn btn-primary btn-lg"> 회원가입 </button>
+				</form>
+			</div>
+			
+		</div>
+	</div>
+	
+</th:block>
+<th:block layout:fragment="customScript">
+	<script th:inline="javascript" type="text/javascript">
+		$(document).ready(() => {
+			
+			$("#join-form").submit( function(e) {
+				
+				if(document.getElementById("email-check").value == "false") {
+					e.preventDefault();
+					alert("이메일 중복확인 해주세요.");
+					$("input[name='email']").focus();
+					return;
+				}
+				
+				if( $("input[name='password']").val() != $("#password-check").val() ) {
+					e.preventDefault();
+					alert("비밀번호가 맞지 않습니다.");
+					$("#password-check").focus();
+					return;
+				}
+			});
+			
+			$("input[name='email']").change(function() {
+				$(".email-check-message").hide();
+			});
+			
+			
+			$("#user-exists-check-button").click(function() {
+				const emailElement = $("input[name='email']");
+				let email = emailElement.val();
+				if(email == "") {
+					alert("이메일을 입력해주세요.");
+					emailElement.focus();
+					document.getElementById("email-check").value = "false";
+				} else {
+					$.ajax({
+						method: "POST",
+						url: "/join/consumer/check/exists",
+						data: {"email":email},
+						success: function(res) {
+							console.log(res);
+							$(".email-check-message").hide();
+							if(res == false) {
+								document.getElementById("email-check").value = "true";
+								$(".email-able-message").show();
+							} else if(res == true) {
+								document.getElementById("email-check").value = "false";
+								$(".email-exist-message").show();
+								emailElement.val(null);
+								emailElement.focus();
+							} else {
+								console.log("알수없는 메시지 : ", res);
+							}
+						}
+					});
+				}
+			});
+			
+		});
+	</script>
+</th:block>
+    
+    
